@@ -9,6 +9,7 @@ import application.ModelUpdateEvent;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.concurrent.Task;
+import javafx.event.EventType;
 import javafx.fxml.FXML;
 import javafx.scene.chart.BarChart;
 import javafx.scene.chart.XYChart;
@@ -103,20 +104,23 @@ public class StatsController extends SceneController{
 		barChartView.getData().clear();
 		statsTextArea.clear();
 		statsTextArea.layout();
-		int mastered=stats.getTotalStatsOfType(Type.MASTERED);
-		int faulted=stats.getTotalStatsOfType(Type.FAULTED);
-		int failed=stats.getTotalStatsOfType(Type.FAILED);
-		int total = mastered+faulted+failed;
-		if(total==0){total=1;}
+		final int mastered=stats.getTotalStatsOfType(Type.MASTERED);
+		final int faulted=stats.getTotalStatsOfType(Type.FAULTED);
+		final int failed=stats.getTotalStatsOfType(Type.FAILED);
+		final int total = ((mastered+faulted+failed)==0)?1:mastered+faulted+failed;
 		XYChart.Series<String, Number> series1 = new XYChart.Series<>();
 		XYChart.Data<String,Number> masteredData = new XYChart.Data<String,Number>("Total Mastered", mastered*100/(double)total);
 		XYChart.Data<String,Number> faultedData = new XYChart.Data<String,Number>("Total Faulted", faulted*100/(double)total);
 		XYChart.Data<String,Number> failedData = new XYChart.Data<String,Number>("Total Failed", failed*100/(double)total);
+		
 		series1.getData().add(masteredData);
 		series1.getData().add(faultedData);
 		series1.getData().add(failedData);
 		barChartView.getData().add(series1);
 		masteredData.getNode().setStyle("-fx-bar-fill: #33cc66;");
+		masteredData.getNode().setOnMouseEntered(e -> {
+			masteredData.setExtraValue(mastered*100/(double)total);
+		});
 		faultedData.getNode().setStyle("-fx-bar-fill: #ffcc66;");
 		failedData.getNode().setStyle("-fx-bar-fill: #cc6666;");
 		Task<String> loader = new Task<String>(){
