@@ -26,7 +26,6 @@ import controller.LevelController;
 import controller.QuizController;
 import controller.SceneController;
 import controller.StatsController;
-import controller.VideoController;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.concurrent.Service;
@@ -75,7 +74,6 @@ public class Main extends Application implements MainInterface {
 	public void start(Stage primaryStage) {
 		this._stage = primaryStage;
 		buildMainScenes();
-		setupVideoFile();
 		try {
 			primaryStage.setTitle("VoxSpell v1.0.1");
 			if(_firstTimeRun){
@@ -133,65 +131,6 @@ public class Main extends Application implements MainInterface {
 			e.printStackTrace();
 		}
 		return false;
-	}
-	/**
-	 * Moves video to ~/.user. Uses FFMPEG to speed up video by 4x
-	 * @author Ryan MacMillan
-	 */
-	private void setupVideoFile() {
-		/*InputStream video1 = this.getClass().getClassLoader().getResourceAsStream("resources/big_buck_bunny_1_minute.mp4");
-		File video = new File(video1);
-		File destination = new File(System.getProperty("user.home") + "/.user/BigBuckBunny.mp4");*/
-		try {
-			exportResource("/resources/big_buck_bunny_1_minute.mp4",System.getProperty("user.home")+"/.user/BigBuckBunny.mp4");
-		} catch (IOException e1) {
-			e1.printStackTrace();
-		}
-		ProcessBuilder pb = new ProcessBuilder("/bin/bash", "-c",
-				"ffmpeg -i ~/.user/BigBuckBunny.mp4 -filter_complex \"[0:v]setpts=0.5*PTS[v];[0:a]atempo=2.0[a]\" -map \"[v]\" -map \"[a]\" -strict -2 ~/.user/SpedUpReward.mp4");
-		
-			//copyFile(video, destination);
-			
-			Task<Integer> ffmpegTask = new Task<Integer>() {
-				@Override
-				protected Integer call() throws Exception {
-					Process process;
-					try {
-					process = pb.start(); // probably better to put it
-													// in the task, which will
-													// be disposed when method
-													// ends.
-					return process.waitFor();
-					} catch (IOException e) {
-						// couldn't find BASH
-						Alert alert = new Alert(AlertType.ERROR);
-						alert.setContentText("This program does not work on non-Linux systems at this time. Sorry about that.");
-						alert.showAndWait();
-						return 1;
-					}
-				}
-
-				public void succeeded() {
-					super.succeeded();
-					try {
-						if (get() != 0) {
-							Alert alert = new Alert(AlertType.ERROR);
-							alert.setContentText("FFMPEG does not work on this system"); // or
-																							// the
-																							// programmer
-																							// did
-																							// something
-																							// wrong
-							alert.showAndWait();
-						}
-					} catch (InterruptedException | ExecutionException e) {
-						e.printStackTrace();
-					}
-				}
-			};
-			new Thread(ffmpegTask).start();
-
-		
 	}
 
 	/**
@@ -421,8 +360,6 @@ public class Main extends Application implements MainInterface {
 			mue.updateFromStatsController();
 		} else if (mue.getControllerClass().equals(LevelController.class)) {
 			mue.updateFromLevelController();
-		} else if (mue.getControllerClass().equals(VideoController.class)) {
-			mue.updateFromVideoController();
 		} else if (mue.getControllerClass().equals(IntroController.class)){
 			mue.updateFromIntroController();
 		}
