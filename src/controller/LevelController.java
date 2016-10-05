@@ -9,6 +9,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TitledPane;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.TilePane;
 import javafx.scene.layout.VBox;
 
 /**
@@ -17,16 +18,19 @@ import javafx.scene.layout.VBox;
  * @author Ryan MacMillan
  */
 public class LevelController extends SceneController {
-	@FXML private Accordion levelAccordion;
+	@FXML private Label levelStatsLbl;
+	@FXML private TilePane tileContainer;
 	@FXML private boolean review;
+	private LevelButton lastButtonClicked;
+	private Button currentHoveredButton;
 	/**
 	 * A small TitledPane that remembers its level.
 	 * @author Mohan Cao
 	 *
 	 */
-	class LevelPane extends TitledPane {
+	public class LevelButton extends Button {
 		private int _level;
-		public LevelPane(int level){
+		public LevelButton(int level){
 			super();
 			_level = level;
 		}
@@ -34,11 +38,13 @@ public class LevelController extends SceneController {
 			return _level;
 		}
 	}
-	
+	public LevelButton getButtonClicked(){
+		return lastButtonClicked;
+	}
 	/**
 	 * Default FXML constructor, called before controller is initialized.
 	 */
-	@FXML public void initialize(){}
+	@FXML public void initialize(){lastButtonClicked=null;currentHoveredButton=null;}
 	/**
 	 * Quit to main menu button
 	 * @param me MouseEvent
@@ -47,17 +53,10 @@ public class LevelController extends SceneController {
 	public void quitToMainMenu(MouseEvent me){
 		application.requestSceneChange("mainMenu");
 	}
-	/**
-	 * Get the current actively selected level from all TitledPanes
-	 * @return level of active pane
-	 */
-	public Integer getLevelSelected(){
-		return ((LevelPane)levelAccordion.getExpandedPane()).getLevel();
-	}
 	@Override
 	public void init(String[] args) {
 		//empty for subclasses to override
-		levelAccordion.getPanes().clear();
+		tileContainer.getChildren().clear();
 		application.update(new ModelUpdateEvent(this, "levelViewLoaded"));
 		if(args!=null && args.length>0 && args[0].equals("failed")){
 			review = true;
@@ -72,22 +71,25 @@ public class LevelController extends SceneController {
 		case "levelsLoaded":
 			ArrayList<?> stats = (ArrayList<?>)(objects[0]);
 			for(int i=1;i<stats.size();i++){
-				LevelPane newPane = new LevelPane(i);
-				VBox contentPane = new VBox();
-				Button newGameBtn = new Button("Start Game");
-				newGameBtn.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> {
+				LevelButton newBtn = new LevelButton(i);
+				newBtn.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> {
+					lastButtonClicked=newBtn;
 					if(review){
 						application.update(new ModelUpdateEvent(this,"startReviewGame"));
 					}else{
 						application.update(new ModelUpdateEvent(this,"startNewGame"));
 					}
 				});
-				contentPane.getChildren().add(new Label("Mastery (words mastered/total):"));
-				contentPane.getChildren().add(new Label(Math.round((Double)stats.get(i)*100)+"%"));
-				contentPane.getChildren().add(newGameBtn);
-				newPane.setText("Level " + (i));
-				newPane.setContent(contentPane);
-				levelAccordion.getPanes().add(newPane);
+				final long masteredpercentage=Math.round((Double)stats.get(i)*100);
+				newBtn.addEventHandler(MouseEvent.MOUSE_ENTERED, event -> {
+					if(currentHoveredButton!=null&&currentHoveredButton.equals(newBtn)) return;
+					levelStatsLbl.setText("Mastery (words mastered/total): "+masteredpercentage+"%");
+					currentHoveredButton = newBtn;
+				});
+				newBtn.setPrefSize(50, 50);
+				newBtn.setStyle("-fx-font-size: "+(int)0.4*50+"px;");
+				newBtn.setText(""+i);
+				tileContainer.getChildren().add(newBtn);
 			}
 			break;
 		}

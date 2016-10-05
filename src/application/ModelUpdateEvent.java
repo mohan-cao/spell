@@ -174,12 +174,12 @@ public class ModelUpdateEvent {
 			_sc.onModelChange("levelsLoaded", levelStats);
 			break;
 		case "startNewGame":
-			_game = new Game(_main, _statsModel, lc.getLevelSelected());
+			_game = new Game(_main, _statsModel, lc.getButtonClicked().getLevel());
 			sendGameUpdateRequest();
 			_main.requestSceneChange("quizMenu");
 			break;
 		case "startReviewGame":
-			_game = new Game(_main, _statsModel, lc.getLevelSelected());
+			_game = new Game(_main, _statsModel, lc.getButtonClicked().getLevel());
 			sendGameUpdateRequest();
 			_main.requestSceneChange("quizMenu","failed");
 			break;
