@@ -9,6 +9,8 @@ import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.effect.BlurType;
+import javafx.scene.effect.DropShadow;
 import javafx.scene.image.Image;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Background;
@@ -32,18 +34,16 @@ public class MainMenuController extends SceneController{
 	@FXML private Button rMistakesBtn;
 	@FXML private StackPane back;
 	@FXML private Label title;
-	/**
-	 * Listener for new quiz navigation button
-	 * @param e MouseEvent
-	 */
-	@FXML public void initialize(){
+	@Override
+	@FXML public void runOnce(){
 		back.setBackground(new Background(new BackgroundFill(Color.BLACK, null, null)));
 		title.setStyle("-fx-text-fill: #fff;");
+		DropShadow ds = new DropShadow(BlurType.GAUSSIAN, Color.BLACK, 15,0.3, 0, 10);
+		title.setEffect(ds);
 		Task<BackgroundImage> task = new Task<BackgroundImage>(){
-
 			@Override
 			protected BackgroundImage call() throws Exception {
-				Image img = new Image("https://hd.unsplash.com/24/DSC02021.JPG");
+				Image img = new Image("https://unsplash.it/800/600/?random&blur&.jpg");
 				BackgroundImage bgimg = new BackgroundImage(img, BackgroundRepeat.NO_REPEAT,BackgroundRepeat.NO_REPEAT, BackgroundPosition.CENTER, new BackgroundSize(BackgroundSize.AUTO, BackgroundSize.AUTO, false, false, false, true));
 				return bgimg;
 			}
@@ -71,8 +71,11 @@ public class MainMenuController extends SceneController{
 			
 		};
 		new Thread(task).start();
-		//back.setStyle("-fx-background-image: url(\"https://unsplash.it/800/600/?random&blur\");");
 	}
+	/**
+	 * Listener for new quiz navigation button
+	 * @param e MouseEvent
+	 */
 	@FXML public void newQuiz(MouseEvent e){
 		application.requestSceneChange("levelMenu");
 	}

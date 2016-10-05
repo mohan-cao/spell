@@ -241,4 +241,6 @@ class GameUpdater extends SceneController {
 	public void cleanup() {}
 	@Override
 	public void onModelChange(String notificationString, Object... objectsParameters) {}
+	@Override
+	public void runOnce() {}
 }

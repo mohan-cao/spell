@@ -34,11 +34,8 @@ public class StatsController extends SceneController{
     @FXML private Button clearStatsBtn;
     @FXML private TextArea statsTextArea;
     @FXML private ComboBox<String> statsSelection;
-    /**
-	 * Default FXML constructor, called before controller is initialized.
-	 */
-	@FXML
-	public void initialize(){
+	@Override
+    @FXML public void runOnce(){
 		barChartView.getYAxis().setLabel("Percentage");
 		statsSelection.getItems().addAll("Global statistics", "Session statistics");
 		statsSelection.getSelectionModel().select(1);

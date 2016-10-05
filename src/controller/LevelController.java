@@ -41,10 +41,8 @@ public class LevelController extends SceneController {
 	public LevelButton getButtonClicked(){
 		return lastButtonClicked;
 	}
-	/**
-	 * Default FXML constructor, called before controller is initialized.
-	 */
-	@FXML public void initialize(){lastButtonClicked=null;currentHoveredButton=null;}
+	@Override
+	@FXML public void runOnce(){lastButtonClicked=null;currentHoveredButton=null;}
 	/**
 	 * Quit to main menu button
 	 * @param me MouseEvent

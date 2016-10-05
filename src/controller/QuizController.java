@@ -28,9 +28,8 @@ public class QuizController extends SceneController{
 	@FXML private Button repeatBtn;
 	@FXML private ProgressBar progress;
 	@FXML private FlowPane buttonPanel;
-	
-	@FXML
-	public void initialize(){
+	@Override
+	@FXML public void runOnce(){
 		Tooltip tts = new Tooltip("Change TTS voice");
 		Tooltip repeat = new Tooltip("Say the word again");
 		Tooltip.install(voiceBtn,tts);

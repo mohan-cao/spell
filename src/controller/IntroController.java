@@ -28,8 +28,8 @@ public class IntroController extends SceneController {
 	}
 	@FXML private ComboBox<Level> levels;
 	@FXML private int unlockUpTo;
-	@FXML
-	public void initialize(){}
+	@Override
+	@FXML public void runOnce(){}
 	/**
 	 * Submits levels
 	 * @param me
