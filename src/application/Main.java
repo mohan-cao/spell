@@ -230,9 +230,10 @@ public class Main extends Application implements MainInterface {
 	 */
 	public boolean requestSceneChange(String key, Stage stage, String... data) {
 		if (screens.containsKey(key)) {
-			stage.hide();
+			
 			stage.setScene(screens.get(key));
 			stage.centerOnScreen();
+			stage.hide();
 			stage.show();
 			stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
 				public void handle(WindowEvent event) {
