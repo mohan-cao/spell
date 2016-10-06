@@ -4,13 +4,10 @@ import java.util.ArrayList;
 
 import application.ModelUpdateEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.Accordion;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.control.TitledPane;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.TilePane;
-import javafx.scene.layout.VBox;
 
 /**
  * A view-controller that is bound to the levels_layout fxml

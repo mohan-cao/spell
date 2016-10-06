@@ -97,7 +97,6 @@ public class Main extends Application implements MainInterface {
 		festivalService.cleanup();
 	}
 
-	@Override
 	public Object loadObjectFromFile(String path) {
 		try {
 			File file = new File(path);
@@ -119,7 +118,6 @@ public class Main extends Application implements MainInterface {
 		return null;
 	}
 
-	@Override
 	public boolean writeObjectToFile(String path, Object obj) {
 		try {
 			File file = new File(path);

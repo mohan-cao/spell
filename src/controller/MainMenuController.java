@@ -2,9 +2,7 @@ package controller;
 
 import java.util.concurrent.ExecutionException;
 
-import javafx.animation.Animation;
 import javafx.animation.FadeTransition;
-import javafx.animation.Transition;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -37,7 +35,6 @@ public class MainMenuController extends SceneController{
 	@Override
 	@FXML public void runOnce(){
 		back.setBackground(new Background(new BackgroundFill(Color.BLACK, null, null)));
-		title.setStyle("-fx-text-fill: #fff;");
 		DropShadow ds = new DropShadow(BlurType.GAUSSIAN, Color.BLACK, 15,0.3, 0, 10);
 		title.setEffect(ds);
 		Task<BackgroundImage> task = new Task<BackgroundImage>(){
@@ -63,7 +60,6 @@ public class MainMenuController extends SceneController{
 						});
 						fadeOut.playFromStart();
 					}
-					title.setStyle("-fx-text-fill: #fff;");
 				} catch (InterruptedException | ExecutionException e) {
 					e.printStackTrace();
 				}
