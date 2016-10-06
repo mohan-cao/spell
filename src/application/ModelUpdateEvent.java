@@ -16,6 +16,7 @@ import controller.LevelController;
 import controller.SceneController;
 import controller.VideoController;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.media.Media;
 import javafx.stage.Stage;
@@ -62,7 +63,7 @@ public class ModelUpdateEvent {
 	 * @param screens
 	 * @param screenFXMLs
 	 */
-	public void updateFromQuizController(Map<String,Scene> screens,Map<String,FXMLLoader> screenFXMLs){
+	public void updateFromQuizController(Map<String, Parent> screens,Map<String,FXMLLoader> screenFXMLs){
 		switch(_message){
 		case "quitToMainMenu_onClick":
 			if(_game!=null&&!_game.isGameEnded()){

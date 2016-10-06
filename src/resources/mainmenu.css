@@ -1,11 +1,11 @@
 /* JavaFX CSS - Leave this comment until you have at least create one rule which uses -fx-Property */
 .blackbackground {
 	-fx-background-color:
-	linear-gradient(from 50% 0% to 50% 100%,rgba(50,50,50,0.3) 0%, rgba(0,0,0,0.5) 100%),
+	linear-gradient(from 50% 0% to 50% 100%,rgba(50,50,50,0.1) 50%, rgba(0,0,0,0) 100%),
 	linear-gradient(from 50% 0% to 50% 100%, rgba(239, 243, 255, 0.1) 0%,rgba(239, 243, 255, 0.25) 17%, rgba(239, 243, 255, 0.25) 75%, transparent 75%),
 	linear-gradient(from 50% 0% to 50% 100%, transparent 0%, rgba(239, 243, 255, 0.5) 100%);
 }
-.blackbackgroundplain{
+.blackbackgroundplain {
 	-fx-background-color:rgba(0,0,0,1);
 }
 .button {

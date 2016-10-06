@@ -36,6 +36,8 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import resources.StoredStats;
@@ -49,7 +51,7 @@ import resources.StoredStats;
  *
  */
 public class Main extends Application implements MainInterface {
-	private Map<String, Scene> screens; // maps keys to scenes
+	private Map<String, Parent> screens; // maps keys to scenes
 	private Map<String, FXMLLoader> screenFXMLs; // maps keys to fxmlloaders,
 													// needed to get controllers
 	private SceneController currentController; // current controller to
@@ -61,7 +63,7 @@ public class Main extends Application implements MainInterface {
 	private boolean _firstTimeRun;
 	Stage _stage;
 	{
-		screens = new HashMap<String, Scene>();
+		screens = new HashMap<String, Parent>();
 		screenFXMLs = new HashMap<String, FXMLLoader>();
 		_firstTimeRun = false;
 		statsModel = new StatisticsModel(this);
@@ -179,7 +181,7 @@ public class Main extends Application implements MainInterface {
 					if ((loc = getClass().getClassLoader().getResource(strSplit[1])) != null) {
 						fxml = new FXMLLoader(loc);
 						menu = (Parent) fxml.load();
-						screens.put(strSplit[0], new Scene(menu));
+						screens.put(strSplit[0], menu);
 						screenFXMLs.put(strSplit[0], fxml);
 					}
 
@@ -230,11 +232,11 @@ public class Main extends Application implements MainInterface {
 	 */
 	public boolean requestSceneChange(String key, Stage stage, String... data) {
 		if (screens.containsKey(key)) {
-			
-			stage.setScene(screens.get(key));
-			stage.centerOnScreen();
-			stage.hide();
-			stage.show();
+			if(stage.getScene()==null){
+				stage.setScene(new Scene(screens.get(key)));
+			}else{
+				stage.getScene().setRoot(screens.get(key));
+			}
 			stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
 				public void handle(WindowEvent event) {
 					if (game != null && !game.onExit()) {
@@ -271,9 +273,10 @@ public class Main extends Application implements MainInterface {
 					Alert alert = new Alert(AlertType.ERROR);
 					alert.setContentText("Could not find Festival text-to-speech\nsynthesiser. Sorry about that.");
 					alert.showAndWait();
-					Platform.exit();
+					//Platform.exit();
+				}else{
+					_pb = new ProcessBuilder(output).start();
 				}
-				_pb = new ProcessBuilder(output).start();
 			} catch (IOException e) {
 				System.err.println("IOException");
 			}
@@ -285,7 +288,7 @@ public class Main extends Application implements MainInterface {
 		}
 
 		public void cleanup() {
-			_pb.destroy();
+			if(_pb!=null)_pb.destroy();
 		}
 		
 		public final void setVoice(String voice) {
