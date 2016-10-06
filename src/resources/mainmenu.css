@@ -6,7 +6,7 @@
 	linear-gradient(from 50% 0% to 50% 100%, transparent 0%, rgba(239, 243, 255, 0.5) 100%);
 }
 .blackbackground2 {
-	-fx-background-color:rgba(150,150,150,0.3),linear-gradient(from 0% 50% to 100% 50%, rgba(255, 255, 255, 0.5) 0%, rgba(239, 243, 255, 0) 100%);
+	-fx-background-color:rgba(150,150,150,0.3);
 }
 .bottomborder {
 	-fx-border-color: #cfd3df;
@@ -17,7 +17,7 @@
 	-fx-border-width: 0 1 0 0;
 }
 .blackbackgroundplain {
-	-fx-background-color:rgba(0,0,0,1);
+	-fx-background-color:rgba(0,0,0,1), radial-gradient(focus-angle 0, focus-distance 0%, center 50% 50%, radius 100%, rgba(255,255,255,0.3) 25%, transparent);
 }
 .button {
 	-fx-border-color: rgba(100,110,170,1);

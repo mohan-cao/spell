@@ -34,7 +34,6 @@ public class MainMenuController extends SceneController{
 	@FXML private Label title;
 	@Override
 	@FXML public void runOnce(){
-		back.setBackground(new Background(new BackgroundFill(Color.BLACK, null, null)));
 		DropShadow ds = new DropShadow(BlurType.GAUSSIAN, Color.BLACK, 15,0.3, 0, 10);
 		title.setEffect(ds);
 		Task<BackgroundImage> task = new Task<BackgroundImage>(){
