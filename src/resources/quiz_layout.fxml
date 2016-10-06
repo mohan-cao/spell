@@ -14,6 +14,7 @@
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
 <StackPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="800.0" styleClass="bluebackground" stylesheets="@../resources/quiz.css" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.QuizController">
@@ -46,7 +47,7 @@
                <children>
                   <AnchorPane>
                      <children>
-                        <Label fx:id="outputLabel" alignment="CENTER" contentDisplay="CENTER" text="{incorrect}" textAlignment="CENTER" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                        <Label fx:id="outputLabel" alignment="CENTER" contentDisplay="CENTER" textAlignment="CENTER" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                            <font>
                               <Font size="96.0" />
                            </font>
@@ -59,18 +60,20 @@
                         <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
                      </padding>
                   </AnchorPane>
-                  <StackPane GridPane.rowIndex="1">
+                  <VBox alignment="CENTER" GridPane.rowIndex="1">
                      <children>
-                        <Label fx:id="correctWordLabel" alignment="CENTER" contentDisplay="CENTER" text="{correctword}" textAlignment="CENTER">
+                        <Label fx:id="correctWordLabel" alignment="CENTER" contentDisplay="CENTER" textAlignment="CENTER">
+                           <font>
+                              <Font size="18.0" />
+                           </font>
+                        </Label>
+                        <Label fx:id="definition" alignment="CENTER" onMouseClicked="#getDefinition" text="Click for definition" textAlignment="CENTER">
                            <font>
                               <Font size="18.0" />
                            </font>
                         </Label>
                      </children>
-                     <padding>
-                        <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
-                     </padding>
-                  </StackPane>
+                  </VBox>
                   <FlowPane fx:id="buttonPanel" alignment="CENTER" columnHalignment="CENTER" hgap="5.0" vgap="5.0" visible="false" GridPane.rowIndex="2">
                      <children>
                         <Button mnemonicParsing="false" onMouseClicked="#btnNextLevel" text="Next Level" />
@@ -144,7 +147,7 @@
                         </GridPane>
                      </children>
                   </GridPane>
-                  <ProgressBar fx:id="progress" progress="0.56" styleClass="flatbar" translateY="-5.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                  <ProgressBar fx:id="progress" progress="0.0" styleClass="flatbar" translateY="-5.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
                </children>
             </AnchorPane>
          </bottom>

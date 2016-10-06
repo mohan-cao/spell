@@ -2,12 +2,25 @@ package controller;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 
+import com.sun.javafx.collections.ObservableListWrapper;
+
 import application.ModelUpdateEvent;
+import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.SimpleDoubleProperty;
+import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.collections.ObservableList;
+import javafx.collections.transformation.FilteredList;
+import javafx.collections.transformation.SortedList;
 import javafx.concurrent.Task;
 import javafx.event.EventType;
 import javafx.fxml.FXML;
@@ -18,7 +31,12 @@ import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableColumn.SortType;
+import javafx.scene.control.TableView;
 import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
 import resources.StoredStats;
 import resources.StoredStats.Type;
@@ -32,8 +50,75 @@ public class StatsController extends SceneController{
     @FXML private BarChart<String, Number> barChartView;
     @FXML private Button mainMenuBtn;
     @FXML private Button clearStatsBtn;
-    @FXML private TextArea statsTextArea;
+    @FXML private TableView<Word> statsTable;
     @FXML private ComboBox<String> statsSelection;
+    @FXML private TextField filterField;
+    public class Word implements Comparable<Word>{
+    	private StringProperty _word;
+    	private IntegerProperty _level;
+    	private IntegerProperty _mastered;
+    	private IntegerProperty _faulted;
+    	private IntegerProperty _failed;
+    	private DoubleProperty _mastery;
+    	public Word(String word, int level, int mastered, int faulted, int failed, double mastery){
+    		setProperties(word,level,mastered,faulted,failed,mastery);
+    	}
+    	public void setProperties(String word, int level, int mastered, int faulted, int failed, double mastery){
+    		wProperty().set(word);
+    		mProperty().set(mastered);
+    		lProperty().set(level);
+    		faultProperty().set(faulted);
+    		failProperty().set(failed);
+    		masteryProperty().set(mastery);
+
+    	}
+    	public String getWProperty(){
+    		return wProperty().get();
+    	}
+    	public int getMProperty(){
+    		return mProperty().get();
+    	}
+    	public int getLProperty(){
+    		return lProperty().get();
+    	}
+    	public int getFaultProperty(){
+    		return faultProperty().get();
+    	}
+    	public int getFailProperty(){
+    		return failProperty().get();
+    	}
+    	public double getMasteryProperty(){
+    		return masteryProperty().get();
+    	}
+    	public StringProperty wProperty(){
+    		if (_word == null) _word = new SimpleStringProperty(this, "wProperty");
+            return _word; 
+    	}
+    	public IntegerProperty mProperty(){
+    		if (_mastered == null) _mastered = new SimpleIntegerProperty(this, "mProperty");
+            return _mastered; 
+    	}
+    	public IntegerProperty lProperty(){
+    		if (_level == null) _level = new SimpleIntegerProperty(this, "lProperty");
+            return _level; 
+    	}
+    	public DoubleProperty masteryProperty(){
+    		if (_mastery == null) _mastery = new SimpleDoubleProperty(this, "masteryProperty");
+            return _mastery; 
+    	}
+    	public IntegerProperty faultProperty(){
+    		if (_faulted == null) _faulted = new SimpleIntegerProperty(this, "faultProperty");
+            return _faulted; 
+    	}
+    	public IntegerProperty failProperty(){
+    		if (_failed == null) _failed = new SimpleIntegerProperty(this, "failProperty");
+            return _failed;
+    	}
+		@Override
+		public int compareTo(Word arg0) {
+			return lProperty().get()-arg0.lProperty().get();
+		}
+    }
 	@Override
     @FXML public void runOnce(){
 		barChartView.getYAxis().setLabel("Percentage");
@@ -76,15 +161,13 @@ public class StatsController extends SceneController{
         	application.update(new ModelUpdateEvent(this, "clearStats"));
         	barChartView.getData().clear();
     		barChartView.layout();
-    		statsTextArea.clear();
-    		statsTextArea.layout();
+    		if(statsTable.getItems()!=null) statsTable.getItems().clear();statsTable.layout();
         }
 	}
 	@Override
 	public void init(String[] args) {
 		barChartView.setAnimated(false);
 		barChartView.setLegendVisible(false);
-		statsTextArea.setEditable(false);
 		if(statsSelection.getSelectionModel().getSelectedItem().equals("Global statistics")){
 		application.update(new ModelUpdateEvent(this, "requestGlobalStats"));
 		}else if(statsSelection.getSelectionModel().getSelectedItem().equals("Session statistics")){
@@ -92,15 +175,30 @@ public class StatsController extends SceneController{
 		}
 	}
 	/**
+	 * 
+	 * @param stats
+	 * @return
+	 */
+	public ObservableList<Word> generateList(final StoredStats stats){
+		List<Word> wordlist = new LinkedList<Word>();
+		for(String key : stats.getKeys()){
+			int mastered = stats.getStat(Type.MASTERED, key);
+			int failed = stats.getStat(Type.FAILED, key);
+			int faulted = stats.getStat(Type.FAULTED, key);
+			if(mastered+failed+faulted==0){continue;}
+			wordlist.add(new Word(key,stats.getLevel(key),mastered,failed,faulted,Math.round(mastered/(double)(mastered+failed+faulted)*100)));
+		}
+		return new ObservableListWrapper<Word>(wordlist);
+	}
+	/**
 	 * Helper method for when the statistics change.
 	 * Updates the chart with the new data accordingly.
 	 * Detailed stats are created (in another thread) and displayed in a text area.
 	 * @param stats
 	 */
-	private void statsChange(StoredStats stats){
+	private void statsChange(final StoredStats stats){
 		barChartView.getData().clear();
-		statsTextArea.clear();
-		statsTextArea.layout();
+		if(statsTable.getItems()!=null) statsTable.getItems().clear();statsTable.layout();
 		final int mastered=stats.getTotalStatsOfType(Type.MASTERED);
 		final int faulted=stats.getTotalStatsOfType(Type.FAULTED);
 		final int failed=stats.getTotalStatsOfType(Type.FAILED);
@@ -120,29 +218,61 @@ public class StatsController extends SceneController{
 		});
 		faultedData.getNode().setStyle("-fx-bar-fill: #ffcc66;");
 		failedData.getNode().setStyle("-fx-bar-fill: #cc6666;");
-		Task<String> loader = new Task<String>(){
-			protected String call() throws Exception {
-				StringBuffer sb = new StringBuffer();
-				ArrayList<String> keys = new ArrayList<String>(stats.getKeys());
-				Collections.sort(keys);
-				for(String key : keys){
-					int mastered = stats.getStat(Type.MASTERED, key);
-					int failed = stats.getStat(Type.FAILED, key);
-					int faulted = stats.getStat(Type.FAULTED, key);
-					if(mastered+failed+faulted==0){continue;}
-					sb.append("Word: "+key+"\n");
-					sb.append("Mastered: "+mastered+"\n");
-					sb.append("Failed: "+failed+"\n");
-					sb.append("Faulted: "+faulted+"\n");
-					sb.append("Mastery: "+Math.round(mastered/(double)(mastered+failed+faulted)*100)+"%\n\n");
-				}
-				if(sb.length()==0){return "No stats to display :(\nGo and do some quizzes";}
-				return sb.toString();
+		Task<ObservableList<Word>> loader = new Task<ObservableList<Word>>(){
+			protected ObservableList<Word> call() throws Exception {
+				return generateList(stats);
 			}
 			public void succeeded(){
 				try {
-					statsTextArea.appendText(this.get());
-					statsTextArea.positionCaret(0);
+					ObservableList<Word> obs = this.get();
+					
+					TableColumn<Word,String> levelColumn = new TableColumn<Word,String>("Level");
+					levelColumn.setCellValueFactory(new PropertyValueFactory<Word,String>("lProperty"));
+					levelColumn.setSortType(SortType.ASCENDING);
+					levelColumn.setSortable(true);
+					TableColumn<Word,String> wordColumn = new TableColumn<Word,String>("Word");
+					wordColumn.setSortable(true);
+					wordColumn.setCellValueFactory(new PropertyValueFactory<Word,String>("wProperty"));
+					TableColumn<Word,Integer> masteredColumn = new TableColumn<Word,Integer>("Mastered");
+					masteredColumn.setCellValueFactory(new PropertyValueFactory<Word,Integer>("mProperty"));
+					TableColumn<Word,Integer> faultedColumn = new TableColumn<Word,Integer>("Faulted");
+					faultedColumn.setCellValueFactory(new PropertyValueFactory<Word,Integer>("faultProperty"));
+					TableColumn<Word,Integer> failedColumn = new TableColumn<Word,Integer>("Failed");
+					failedColumn.setCellValueFactory(new PropertyValueFactory<Word,Integer>("failProperty"));
+					TableColumn<Word,Double> masteryColumn = new TableColumn<Word,Double>("Mastery");
+					masteryColumn.setCellValueFactory(new PropertyValueFactory<Word,Double>("masteryProperty"));
+					statsTable.getColumns().clear();
+					
+					//add each one once instead of using addAll, which results in non-typed adding
+					statsTable.getColumns().add(levelColumn);
+					statsTable.getColumns().add(wordColumn);
+					statsTable.getColumns().add(masteredColumn);
+					statsTable.getColumns().add(faultedColumn);
+					statsTable.getColumns().add(failedColumn);
+					statsTable.getColumns().add(masteryColumn);
+					statsTable.setItems(obs);
+					
+					//make obs filterable
+					FilteredList<Word> filterable = new FilteredList<>(obs, p->true);
+					filterField.textProperty().addListener((o,oldData,newData) -> {
+						filterable.setPredicate(p -> {
+							if(newData==null||newData.isEmpty()) return true;
+							String lowerFilter = newData.toLowerCase();
+							if(lowerFilter.matches("^*[0-9]")){
+								lowerFilter = lowerFilter.replaceAll("[^0-9]", "");
+								System.out.println(lowerFilter);
+							}
+							if(lowerFilter.equals(p.getWProperty())){
+								return true;
+							}
+							return false;
+						});
+						
+					});
+					SortedList<Word> sorted = new SortedList<>(filterable);
+					sorted.comparatorProperty().bind(statsTable.comparatorProperty());
+					statsTable.setItems(sorted);
+					
 				} catch (InterruptedException | ExecutionException e) {
 					e.printStackTrace();
 				}

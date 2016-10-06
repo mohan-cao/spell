@@ -5,23 +5,38 @@
 <?import javafx.scene.chart.NumberAxis?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ComboBox?>
-<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.SplitPane?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.ToolBar?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
-<?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.BorderPane?>
 
 <BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" styleClass="bluebackground" stylesheets="@../resources/stats.css" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.StatsController">
    <center>
-      <BarChart fx:id="barChartView" horizontalGridLinesVisible="false" legendVisible="false" verticalGridLinesVisible="false" BorderPane.alignment="CENTER">
-        <xAxis>
-          <CategoryAxis side="BOTTOM" />
-        </xAxis>
-        <yAxis>
-          <NumberAxis side="LEFT" />
-        </yAxis>
-      </BarChart>
+      <SplitPane dividerPositions="0.5" style="-fx-background-color: transparent;" BorderPane.alignment="CENTER">
+         <items>
+            <BarChart fx:id="barChartView" horizontalGridLinesVisible="false" legendVisible="false" verticalGridLinesVisible="false">
+              <xAxis>
+                <CategoryAxis side="BOTTOM" />
+              </xAxis>
+              <yAxis>
+                <NumberAxis side="LEFT" />
+              </yAxis>
+            </BarChart>
+            <TableView fx:id="statsTable" prefHeight="200.0" prefWidth="200.0">
+              <columns>
+                <TableColumn prefWidth="70.0" text="Word" />
+                <TableColumn prefWidth="92.0" text="Mastered" />
+                  <TableColumn prefWidth="75.0" text="Faulted" />
+                  <TableColumn prefWidth="75.0" text="Failed" />
+                  <TableColumn prefWidth="75.0" text="Mastery" />
+              </columns>
+            </TableView>
+         </items>
+      </SplitPane>
    </center>
    <top>
       <ToolBar prefHeight="40.0" prefWidth="200.0" styleClass="darkbluebackground" BorderPane.alignment="CENTER">
@@ -36,14 +51,8 @@
                </graphic></Button>
             <Button fx:id="clearStatsBtn" mnemonicParsing="false" onMouseClicked="#clearStats" text="Clear stats" />
             <ComboBox fx:id="statsSelection" prefHeight="26.0" prefWidth="160" />
+            <TextField fx:id="filterField" promptText="Filter by..." />
         </items>
       </ToolBar>
    </top>
-   <right>
-      <AnchorPane prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
-         <children>
-            <TextArea fx:id="statsTextArea" layoutY="59.0" prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0" />
-         </children>
-      </AnchorPane>
-   </right>
 </BorderPane>

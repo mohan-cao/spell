@@ -1,5 +1,12 @@
 package controller;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.net.URL;
+import java.util.concurrent.ExecutionException;
+
+import javax.net.ssl.HttpsURLConnection;
+
 import application.ModelUpdateEvent;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
@@ -22,12 +29,14 @@ import javafx.scene.paint.Paint;
 public class QuizController extends SceneController{
 	@FXML private Label outputLabel;
 	@FXML private Label correctWordLabel;
+	@FXML private Label definition;
 	@FXML private TextArea wordTextArea;
 	@FXML private Button confirm;
 	@FXML private Button voiceBtn;
 	@FXML private Button repeatBtn;
 	@FXML private ProgressBar progress;
 	@FXML private FlowPane buttonPanel;
+	
 	@Override
 	@FXML public void runOnce(){
 		Tooltip tts = new Tooltip("Change TTS voice");
@@ -101,6 +110,40 @@ public class QuizController extends SceneController{
 	@FXML
 	public void btnNextLevel(MouseEvent me){
 		application.update(new ModelUpdateEvent(this, "nextLevel"));
+	}
+	@FXML
+	public void getDefinition(MouseEvent me){
+		System.out.println("mouse event");
+		final String def = wordTextArea.getText();
+		Task<String> getreq = new Task<String>(){
+			private static final String app_id = "25890eb1";
+            private static final String app_key = "9f5c79bde4f7961c3e38d8f1c31e0a79";
+			@Override
+			protected String call() throws Exception {
+				URL url = new URL("https://od-api.oxforddictionaries.com:443/api/v1/entries/en/"+def+"/examples");
+                HttpsURLConnection urlConnection = (HttpsURLConnection) url.openConnection();
+                urlConnection.setRequestProperty("Accept","application/json");
+                urlConnection.setRequestProperty("app_id",app_id);
+                urlConnection.setRequestProperty("app_key",app_key);
+                // read the output from the server
+                BufferedReader reader = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
+                StringBuffer stringBuilder = new StringBuffer();
+                String line = null;
+                while ((line = reader.readLine()) != null) {
+                    stringBuilder.append(line + "\n");
+                }
+                return stringBuilder.toString();
+			}
+			public void done(){
+				try {
+					System.out.println("this works: "+get());
+				} catch (InterruptedException | ExecutionException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		};
+		new Thread(getreq).start();
 	}
 	/**
 	 * Validates input before sending it to the marking algorithm

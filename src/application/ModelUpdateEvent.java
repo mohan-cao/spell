@@ -1,10 +1,7 @@
 package application;
 
-import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashSet;
@@ -14,12 +11,8 @@ import java.util.Set;
 import controller.IntroController;
 import controller.LevelController;
 import controller.SceneController;
-import controller.VideoController;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
-import javafx.scene.Scene;
-import javafx.scene.media.Media;
-import javafx.stage.Stage;
 import resources.StoredStats;
 import resources.StoredStats.Type;
 /**
