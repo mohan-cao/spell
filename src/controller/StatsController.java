@@ -258,9 +258,10 @@ public class StatsController extends SceneController{
 						filterable.setPredicate(p -> {
 							if(newData==null||newData.isEmpty()) return true;
 							String lowerFilter = newData.toLowerCase();
-							if(lowerFilter.matches("^*[0-9]")){
-								lowerFilter = lowerFilter.replaceAll("[^0-9]", "");
-								System.out.println(lowerFilter);
+							if(lowerFilter.matches("^[0-9]+")){
+								if(Integer.parseInt(lowerFilter)==p.getLProperty()){
+									return true;
+								}
 							}
 							if(lowerFilter.equals(p.getWProperty())){
 								return true;

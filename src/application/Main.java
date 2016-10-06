@@ -52,10 +52,8 @@ import resources.StoredStats;
  */
 public class Main extends Application implements MainInterface {
 	private Map<String, Parent> screens; // maps keys to scenes
-	private Map<String, FXMLLoader> screenFXMLs; // maps keys to fxmlloaders,
-													// needed to get controllers
-	private SceneController currentController; // current controller to
-												// displayed scene
+	private Map<String, FXMLLoader> screenFXMLs; // maps keys to fxmlloaders, needed to get controllers
+	private SceneController currentController; // current controller to displayed scene
 	private StatisticsModel statsModel;
 	private Game game;
 	private Queue<Task<Integer>> festivalTasks;
