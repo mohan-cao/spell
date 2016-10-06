@@ -77,7 +77,7 @@ public class Main extends Application implements MainInterface {
 		this._stage = primaryStage;
 		buildMainScenes();
 		try {
-			primaryStage.setTitle("VoxSpell v1.0.1");
+			primaryStage.setTitle("VoxSpell v1.1.0");
 			if(_firstTimeRun){
 				requestSceneChange("firstTime");
 			}else{

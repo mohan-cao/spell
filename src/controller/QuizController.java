@@ -7,6 +7,9 @@ import java.util.concurrent.ExecutionException;
 
 import javax.net.ssl.HttpsURLConnection;
 
+import com.eclipsesource.json.Json;
+import com.eclipsesource.json.JsonValue;
+
 import application.ModelUpdateEvent;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
@@ -136,6 +139,8 @@ public class QuizController extends SceneController{
 			}
 			public void done(){
 				try {
+					JsonValue json = Json.parse(get());
+					//json.
 					System.out.println("this works: "+get());
 				} catch (InterruptedException | ExecutionException e) {
 					// TODO Auto-generated catch block

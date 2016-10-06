@@ -120,7 +120,8 @@ public class Game {
 			File file = new File(path.getParent()+"/"+WORDLIST);
 			if(!file.exists()){
 				Alert alert = new Alert(AlertType.ERROR);
-				alert.setContentText("You don't have a word list!\nPlease put one in the folder that you ran the spelling app from.");
+				alert.setContentText("You don't have a word list!\nPlease put one in "+main.getClass().getProtectionDomain().getCodeSource().getLocation().toURI().toString());
+				alert.setResizable(true);
 				alert.showAndWait();
 				return false;
 			}
