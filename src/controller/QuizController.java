@@ -154,21 +154,33 @@ public class QuizController extends SceneController{
 				try {
 					JsonObject json = Json.parse(get()).asObject();
 					JsonObject result1 = json.get("results").asArray().get(0).asObject();
-					JsonObject entry1 = result1.get("lexicalEntries").asArray().get(0).asObject().get("entries").asArray().get(0).asObject();
+					JsonObject entry1 = null;
+					for(JsonValue lexEntries : result1.get("lexicalEntries").asArray()){
+						String lexCat = lexEntries.asObject().getString("lexicalCategory", null);
+						if(lexCat!=null){
+							lexCat = lexCat.toLowerCase();
+							if(!lexCat.equals("residual")){
+								entry1 = lexEntries.asObject().get("entries").asArray().get(0).asObject();
+								break;
+							}
+						}
+					}
+					if(entry1==null)return;
 					JsonArray examples = entry1.get("senses").asArray();
 					JsonValue temp = null;
 					JsonArray out = null;
 					for(JsonValue jv : examples){
 						temp = jv.asObject().get("examples");
-						if(temp!=null){out = temp.asArray();break;}
+						if(temp!=null){
+							out = temp.asArray();
+							if(out!=null){
+								String str = out.get(0).asObject().get("text").asString().replaceAll("[^\\sa-zA-Z0-9']", " ");
+								application.sayWord(1.3, "kal_diphone", str);
+								System.out.println(str);
+							}
+						}
 					}
-					if(out!=null){
-						String[] splitString = out.get(0).asObject().get("text").asString().split(def);
-						application.sayWord(1, "kal_diphone", splitString[0]);
-						application.sayWord(2, "kal_diphone", def);
-						application.sayWord(1, "kal_diphone", splitString[1]);
-						
-					}
+					
 				} catch (InterruptedException ie){ie.printStackTrace();}catch(ExecutionException e) {
 					e.printStackTrace();
 				}

@@ -59,6 +59,6 @@ public interface MainInterface {
 	 * @param i speed
 	 * @param string Sequence of strings
 	 */
-	public void sayWord(int i, String voice, String... string);
+	public void sayWord(final double i, final String voice, final String... string);
 	
 }
