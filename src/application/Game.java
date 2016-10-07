@@ -11,6 +11,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ButtonType;
@@ -27,6 +30,7 @@ import resources.StoredStats.Type;
  *
  */
 public class Game {
+	final Logger logger = LoggerFactory.getLogger(Game.class);
 	public static final int WORDS_NUM = 10;
 	public static final String WORDLIST = "NZCER-spelling-lists.txt";
 	public static final int SAY_SPEED_INTRO = 1;
@@ -142,7 +146,7 @@ public class Game {
 			br.close();
 			return true;
 		} catch (IOException | URISyntaxException e) {
-			e.printStackTrace();
+			logger.error("word list fetching error");
 			return false;
 		}
 	}

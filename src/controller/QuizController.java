@@ -9,6 +9,9 @@ import java.util.concurrent.ExecutionException;
 
 import javax.net.ssl.HttpsURLConnection;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.eclipsesource.json.Json;
 import com.eclipsesource.json.JsonArray;
 import com.eclipsesource.json.JsonObject;
@@ -34,6 +37,7 @@ import javafx.scene.paint.Paint;
  *
  */
 public class QuizController extends SceneController{
+	final Logger logger = LoggerFactory.getLogger(this.getClass());
 	@FXML private Label outputLabel;
 	@FXML private Label correctWordLabel;
 	@FXML private Label definition;
@@ -181,7 +185,7 @@ public class QuizController extends SceneController{
 						}
 					}
 					
-				} catch (InterruptedException ie){ie.printStackTrace();}catch(ExecutionException e) {
+				} catch (InterruptedException ie){logger.error(ie.getMessage());}catch(ExecutionException e) {
 					e.printStackTrace();
 				}
 			}

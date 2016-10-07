@@ -8,7 +8,6 @@ import javafx.stage.Stage;
  *
  */
 public interface MainInterface {
-	//public static final String STATS_PATH = System.getProperty("user.home")+"/.user/stats.ser";
 	/**
 	 * Request a scene change in the application.
 	 * @param key

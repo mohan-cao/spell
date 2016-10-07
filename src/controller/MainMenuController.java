@@ -3,6 +3,9 @@ package controller;
 import java.net.URISyntaxException;
 import java.util.concurrent.ExecutionException;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import javafx.animation.FadeTransition;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
@@ -30,6 +33,7 @@ import javafx.util.Duration;
  * @author Ryan MacMillan (previously, code is now gone)
  */
 public class MainMenuController extends SceneController{
+	final Logger logger = LoggerFactory.getLogger(this.getClass());
 	@FXML private Button nQuizBtn;
 	@FXML private Button vStatsBtn;
 	@FXML private Button cStatsBtn;
@@ -44,7 +48,7 @@ public class MainMenuController extends SceneController{
 			media.setAutoPlay(false);
 			media.setCycleCount(Integer.MAX_VALUE);
 		} catch (URISyntaxException e) {
-			System.err.println("media isnt work sorry");
+			logger.error("media isnt work sorry");
 		}
 		DropShadow ds = new DropShadow(BlurType.GAUSSIAN, Color.BLACK, 15,0.3, 0, 10);
 		title.setEffect(ds);
@@ -72,7 +76,7 @@ public class MainMenuController extends SceneController{
 						fadeOut.playFromStart();
 					}
 				} catch (InterruptedException | ExecutionException e) {
-					e.printStackTrace();
+					logger.error(e.getMessage());
 				}
 			}
 			

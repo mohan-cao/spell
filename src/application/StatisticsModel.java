@@ -5,6 +5,9 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import javafx.scene.control.Alert;
 import resources.StoredStats;
 /**
@@ -15,7 +18,8 @@ import resources.StoredStats;
  *
  */
 public class StatisticsModel {
-	public static final String STATS_PATH = System.getProperty("user.home")+"/.user/stats.ser";
+	final Logger logger = LoggerFactory.getLogger(StatisticsModel.class);
+	public static final String STATS_PATH = System.getProperty("user.dir")+"/.user/stats.ser";
 	private StoredStats sessionStats;
 	private StoredStats globalStats;
 	private MainInterface application;
@@ -50,7 +54,7 @@ public class StatisticsModel {
 				fo.close();
 				_isFirstTime = true;
 			} catch (IOException e) {
-				e.printStackTrace();
+				logger.error(e.getMessage());
 			}
 		}
 		//load global stats using the application model if possible
@@ -74,8 +78,11 @@ public class StatisticsModel {
 	 * The current session data is stored to the global data and serialized.
 	 */
 	public void sessionEnd(){
+		logger.debug("session ended, storing stats.");
 		if(globalStats==null){return;}
+		logger.debug("session stats levels unlocked:"+sessionStats.getUnlockedLevelSet());
 		globalStats.addStats(sessionStats);
+		logger.debug("global stats levels unlocked:"+globalStats.getUnlockedLevelSet());
 		sessionStats.clearStats();
 		application.writeObjectToFile(STATS_PATH, globalStats);
 	}

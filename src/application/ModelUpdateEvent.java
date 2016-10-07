@@ -8,6 +8,9 @@ import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import controller.IntroController;
 import controller.LevelController;
 import controller.SceneController;
@@ -22,6 +25,7 @@ import resources.StoredStats.Type;
  *
  */
 public class ModelUpdateEvent {
+	final Logger logger = LoggerFactory.getLogger(this.getClass());
 	private final String _message;
 	private final SceneController _sc;
 	private final Class<? extends SceneController> _class;
@@ -74,7 +78,7 @@ public class ModelUpdateEvent {
 					Method method = _class.getMethod("validateAndSubmitInput");
 					method.invoke(_sc);
 				} catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
-					e.printStackTrace();
+					logger.error(e.getMessage());
 				}
 			}else{
 				_game.startGame();
@@ -104,7 +108,7 @@ public class ModelUpdateEvent {
 				String word = (String) method.invoke(_sc);
 				_game.submitWord(word);
 			} catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
-				e.printStackTrace();
+				logger.error(e.getMessage());
 			}
 			
 			break;
@@ -191,6 +195,7 @@ public class ModelUpdateEvent {
 			_main.tell("levelsLoaded",levels);
 			break;
 		case "unlockLevels":
+			logger.debug("Unlocked levels: "+ic.getLevelsToUnlock());
 			for(int i=1;i<=ic.getLevelsToUnlock();i++){
 			_statsModel.getSessionStats().unlockLevel(i);
 			}

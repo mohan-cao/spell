@@ -211,8 +211,8 @@ public class StoredStats implements Serializable{
 			this.addStat(Type.MASTERED, key, other.getStat(Type.MASTERED, key), other.getLevel(key));
 			this.addStat(Type.FAULTED, key, other.getStat(Type.FAULTED, key), other.getLevel(key));
 			this.addStat(Type.FAILED, key, other.getStat(Type.FAILED, key), other.getLevel(key));
-			this._unlockedLevels.putAll(other._unlockedLevels);
 		}
+		this._unlockedLevels.putAll(other._unlockedLevels);
 	}
 	/**
 	 * Removes key from all stats.

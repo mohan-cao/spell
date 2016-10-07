@@ -3,7 +3,11 @@ package controller;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import application.ModelUpdateEvent;
+import application.StatisticsModel;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -19,6 +23,7 @@ import javafx.scene.media.MediaView;
  * @author Ryan MacMillan
  */
 public class LevelController extends SceneController {
+	final Logger logger = LoggerFactory.getLogger(this.getClass());
 	@FXML private Label levelStatsLbl;
 	@FXML private TilePane tileContainer;
 	@FXML private boolean review;
@@ -49,7 +54,7 @@ public class LevelController extends SceneController {
 			media = new MediaPlayer(new Media(getClass().getClassLoader().getResource("resources/levelannouncer.mp3").toURI().toString()));
 			media.setAutoPlay(false);
 		} catch (URISyntaxException e) {
-			System.err.println("media isnt work sorry");
+			logger.error("media isnt work sorry");
 		}
 		lastButtonClicked=null;currentHoveredButton=null;
 	}

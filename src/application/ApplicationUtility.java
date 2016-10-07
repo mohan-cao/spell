@@ -6,7 +6,11 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.net.URISyntaxException;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public final class ApplicationUtility {
+	static Logger logger = LoggerFactory.getLogger(ApplicationUtility.class);
 	public static int evaluateMaxLevelInFile(){
 		try{
 			File path = new File(ApplicationUtility.class.getProtectionDomain().getCodeSource().getLocation().toURI());
@@ -27,9 +31,9 @@ public final class ApplicationUtility {
 			br.close();
 			return level;
 		}catch(IOException io){
-			io.printStackTrace();
+			logger.error("could not find wordlist");
 		} catch (URISyntaxException e) {
-			e.printStackTrace();
+			logger.error("url incorrect");
 		}
 		return 0;
 	}

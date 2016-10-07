@@ -23,6 +23,9 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.LinkedBlockingQueue;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import controller.IntroController;
 import controller.LevelController;
 import controller.QuizController;
@@ -54,6 +57,7 @@ import resources.StoredStats;
  *
  */
 public class Main extends Application implements MainInterface {
+	final Logger logger = LoggerFactory.getLogger(this.getClass());
 	private Map<String, Parent> screens; // maps keys to scenes
 	private Map<String, FXMLLoader> screenFXMLs; // maps keys to fxmlloaders, needed to get controllers
 	private SceneController currentController; // current controller to displayed scene
@@ -75,18 +79,13 @@ public class Main extends Application implements MainInterface {
 	public void start(Stage primaryStage) {
 		this._stage = primaryStage;
 		buildMainScenes();
-		try {
-			primaryStage.setTitle("VoxSpell v1.1.0");
-			if(_firstTimeRun){
-				requestSceneChange("firstTime");
-			}else{
-				requestSceneChange("mainMenu");
-			}
-			primaryStage.show();
-
-		} catch (Exception e) {
-			e.printStackTrace();
+		primaryStage.setTitle("VoxSpell v1.1.0");
+		if(_firstTimeRun){
+			requestSceneChange("firstTime");
+		}else{
+			requestSceneChange("mainMenu");
 		}
+		primaryStage.show();
 	}
 
 	@Override
@@ -108,11 +107,11 @@ public class Main extends Application implements MainInterface {
 			instr.close();
 			return obj;
 		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
+			logger.error("could not find class");
 		} catch (InvalidClassException ice) {
 			writeObjectToFile(path, new StoredStats());
 		} catch (IOException e) {
-			e.printStackTrace();
+			logger.error("could not read object from file");
 		}
 		return null;
 	}
@@ -127,7 +126,7 @@ public class Main extends Application implements MainInterface {
 			fileout.close();
 			return true;
 		} catch (IOException e) {
-			e.printStackTrace();
+			logger.error("could not write object to file");
 		}
 		return false;
 	}
@@ -183,7 +182,7 @@ public class Main extends Application implements MainInterface {
 					}
 
 				} catch (IOException ioex) {
-					System.err.println("Scene loading error");
+					logger.error("Scene loading error: "+ioex.getMessage());
 					ioex.printStackTrace();
 				}
 			}
@@ -196,6 +195,7 @@ public class Main extends Application implements MainInterface {
 					br.close();
 				}
 			} catch (IOException e1) {
+				logger.error("could not close bufferedreader");
 			}
 		}
 	}
@@ -285,7 +285,7 @@ public class Main extends Application implements MainInterface {
 					_pb = new ProcessBuilder(output).start();
 				}
 			} catch (IOException e) {
-				System.err.println("IOException");
+				logger.error("IOException "+e.getMessage());
 			}
 		}
 		public void cleanup() {
@@ -305,8 +305,7 @@ public class Main extends Application implements MainInterface {
 				}
 				bw.flush();
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				logger.error(e.getLocalizedMessage());
 			}
 		}
 		
@@ -349,6 +348,7 @@ public class Main extends Application implements MainInterface {
 	}
 
 	public static void main(String[] args) {
+		System.setProperty(org.slf4j.impl.SimpleLogger.DEFAULT_LOG_LEVEL_KEY, "DEBUG");
 		launch(args);
 	}
 }
