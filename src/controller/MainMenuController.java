@@ -1,5 +1,6 @@
 package controller;
 
+import java.net.URISyntaxException;
 import java.util.concurrent.ExecutionException;
 
 import javafx.animation.FadeTransition;
@@ -18,6 +19,9 @@ import javafx.scene.layout.BackgroundPosition;
 import javafx.scene.layout.BackgroundRepeat;
 import javafx.scene.layout.BackgroundSize;
 import javafx.scene.layout.StackPane;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
+import javafx.scene.media.MediaPlayer.Status;
 import javafx.scene.paint.Color;
 import javafx.util.Duration;
 /**
@@ -32,8 +36,16 @@ public class MainMenuController extends SceneController{
 	@FXML private Button rMistakesBtn;
 	@FXML private StackPane back;
 	@FXML private Label title;
+	private MediaPlayer media;
 	@Override
 	@FXML public void runOnce(){
+		try {
+			media = new MediaPlayer(new Media(getClass().getClassLoader().getResource("resources/Carpe Diem.mp3").toURI().toString()));
+			media.setAutoPlay(false);
+			media.setCycleCount(Integer.MAX_VALUE);
+		} catch (URISyntaxException e) {
+			System.err.println("media isnt work sorry");
+		}
 		DropShadow ds = new DropShadow(BlurType.GAUSSIAN, Color.BLACK, 15,0.3, 0, 10);
 		title.setEffect(ds);
 		Task<BackgroundImage> task = new Task<BackgroundImage>(){
@@ -72,6 +84,7 @@ public class MainMenuController extends SceneController{
 	 * @param e MouseEvent
 	 */
 	@FXML public void newQuiz(MouseEvent e){
+		media.pause();
 		application.requestSceneChange("levelMenu");
 	}
 	/**
@@ -79,6 +92,7 @@ public class MainMenuController extends SceneController{
 	 * @param e MouseEvent
 	 */
 	@FXML public void viewStats(MouseEvent e){
+		media.pause();
 		application.requestSceneChange("statsMenu");
 	}
 	/**
@@ -86,10 +100,13 @@ public class MainMenuController extends SceneController{
 	 * @param e MouseEvent
 	 */
 	@FXML public void reviewMistakes(MouseEvent e){
+		media.pause();
 		application.requestSceneChange("levelMenu","failed");
 	}
 	@Override
-	public void init(String[] args) {}
+	public void init(String[] args) {
+		media.play();
+	}
 	@Override
 	public void onModelChange(String fieldName, Object...objects ) {}
 	@Override

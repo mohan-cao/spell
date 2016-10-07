@@ -14,7 +14,7 @@
       <AnchorPane>
          <children>
             <StackPane fx:id="back" prefHeight="150.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
-            <StackPane AnchorPane.bottomAnchor="180.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+            <StackPane prefHeight="279.0" prefWidth="800.0" AnchorPane.bottomAnchor="320.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                <children>
                   <Label fx:id="title" text="VOXSPELL" textFill="WHITE">
                      <font>
@@ -40,6 +40,11 @@
                      </font>
                   </Button>
                   <Button fx:id="vStatsBtn" alignment="CENTER" mnemonicParsing="false" onMouseClicked="#viewStats" prefHeight="40.0" prefWidth="200.0" text="Statistics">
+                     <font>
+                        <Font size="16.0" />
+                     </font>
+                  </Button>
+                  <Button mnemonicParsing="false" prefHeight="40.0" prefWidth="200.0" text="Settings">
                      <font>
                         <Font size="16.0" />
                      </font>

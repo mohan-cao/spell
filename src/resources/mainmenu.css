@@ -14,7 +14,7 @@
 }
 .rightborder {
 	-fx-border-color: rgba(255,255,255,0.3);
-	-fx-border-width: 0 1 0 0;
+	-fx-border-width: 1 1 0 0;
 }
 .blackbackgroundplain {
 	-fx-background-color:rgba(0,0,0,1), radial-gradient(focus-angle 0, focus-distance 0%, center 50% 50%, radius 100%, rgba(255,255,255,0.3) 25%, transparent);
