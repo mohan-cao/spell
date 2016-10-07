@@ -146,7 +146,7 @@ public class QuizController extends SceneController{
 					JsonObject entry1 = result1.get("lexicalEntries").asArray().get(0).asObject().get("entries").asArray().get(0).asObject();
 					JsonArray examples = entry1.get("senses").asArray().get(0).asObject().get("examples").asArray();
 					System.out.println(examples.get(0).asObject().get("text").asString());
-					System.out.println("this works: "+get());
+					//System.out.println("this works: "+get());
 				} catch (InterruptedException | ExecutionException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -162,6 +162,7 @@ public class QuizController extends SceneController{
 	public void validateAndSubmitInput(){
 		if(wordTextArea.getText().isEmpty()){
 			//prevent accidental empty string submission for user acceptance, show brief tooltip
+			
 			Tooltip tip = new Tooltip("Please enter a word!");
 			tip.setAutoHide(true);
 			tip.show(wordTextArea, wordTextArea.localToScreen(wordTextArea.getBoundsInLocal()).getMaxX(), wordTextArea.localToScreen(wordTextArea.getBoundsInLocal()).getMinY());

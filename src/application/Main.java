@@ -32,6 +32,7 @@ import javafx.concurrent.Service;
 import javafx.concurrent.Task;
 import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Orientation;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
@@ -228,10 +229,18 @@ public class Main extends Application implements MainInterface {
 	 */
 	public boolean requestSceneChange(String key, Stage stage, String... data) {
 		if (screens.containsKey(key)) {
+			Parent root = null;
 			if(stage.getScene()==null){
-				stage.setScene(new Scene(screens.get(key)));
+				root = screens.get(key);
+				stage.setScene(new Scene(root));
 			}else{
-				stage.getScene().setRoot(screens.get(key));
+				root = screens.get(key);
+				stage.getScene().setRoot(root);
+				if(!stage.isMaximized()&&!stage.isFullScreen()){
+					stage.setHeight(root.prefHeight(-1));
+					stage.setWidth(root.prefWidth(-1));
+					stage.centerOnScreen();
+				}
 			}
 			stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
 				public void handle(WindowEvent event) {
