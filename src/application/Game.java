@@ -119,9 +119,7 @@ public class Game {
 			File path = new File(main.getClass().getProtectionDomain().getCodeSource().getLocation().toURI());
 			File file = new File(path.getParent()+"/"+WORDLIST);
 			if(!file.exists()){
-				Alert alert = new Alert(AlertType.ERROR);
-				alert.setContentText("You don't have a word list!\nPlease put one in "+main.getClass().getProtectionDomain().getCodeSource().getLocation().toURI().toString());
-				alert.setResizable(true);
+				Alert alert = new Alert(AlertType.ERROR,"You don't have a word list!\nPlease put one in "+main.getClass().getProtectionDomain().getCodeSource().getLocation().toURI().toString());
 				alert.showAndWait();
 				return false;
 			}

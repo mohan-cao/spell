@@ -1,6 +1,8 @@
 package controller;
 
 import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.concurrent.ExecutionException;
@@ -118,37 +120,56 @@ public class QuizController extends SceneController{
 	}
 	@FXML
 	public void getDefinition(MouseEvent me){
-		System.out.println("mouse event");
 		final String def = wordTextArea.getText();
 		Task<String> getreq = new Task<String>(){
 			private static final String app_id = "25890eb1";
             private static final String app_key = "9f5c79bde4f7961c3e38d8f1c31e0a79";
+            private String getFromURL(final URL url) throws Exception{
+                HttpsURLConnection urlConnection2 = (HttpsURLConnection) url.openConnection();
+                urlConnection2.setRequestProperty("Accept","application/json");
+                urlConnection2.setRequestProperty("app_id",app_id);
+                urlConnection2.setRequestProperty("app_key",app_key);
+                // read the output from the server
+                BufferedReader reader2 = null;
+                reader2 = new BufferedReader(new InputStreamReader(urlConnection2.getInputStream()));
+                StringBuffer stringBuilder2 = new StringBuffer();
+                String line2 = null;
+                while ((line2 = reader2.readLine()) != null) {
+                    stringBuilder2.append(line2 + "\n");
+                }
+                return stringBuilder2.toString();
+            }
 			@Override
 			protected String call() throws Exception {
-				URL url = new URL("https://od-api.oxforddictionaries.com:443/api/v1/entries/en/"+def+"/examples");
-                HttpsURLConnection urlConnection = (HttpsURLConnection) url.openConnection();
-                urlConnection.setRequestProperty("Accept","application/json");
-                urlConnection.setRequestProperty("app_id",app_id);
-                urlConnection.setRequestProperty("app_key",app_key);
-                // read the output from the server
-                BufferedReader reader = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
-                StringBuffer stringBuilder = new StringBuffer();
-                String line = null;
-                while ((line = reader.readLine()) != null) {
-                    stringBuilder.append(line + "\n");
-                }
-                return stringBuilder.toString();
+				try{
+					return getFromURL(new URL("https://od-api.oxforddictionaries.com:443/api/v1/entries/en/"+def+"/examples"));
+				}catch(IOException ie){}
+                JsonObject json = Json.parse(getFromURL(new URL("https://od-api.oxforddictionaries.com:443/api/v1/inflections/en/"+def))).asObject();
+                JsonObject result1 = json.get("results").asArray().get(0).asObject();
+                String id = result1.get("lexicalEntries").asArray().get(0).asObject().get("inflectionOf").asArray().get(0).asObject().get("id").asString();
+                return getFromURL(new URL("https://od-api.oxforddictionaries.com:443/api/v1/entries/en/"+id+"/examples"));
+                
 			}
 			public void done(){
 				try {
 					JsonObject json = Json.parse(get()).asObject();
 					JsonObject result1 = json.get("results").asArray().get(0).asObject();
 					JsonObject entry1 = result1.get("lexicalEntries").asArray().get(0).asObject().get("entries").asArray().get(0).asObject();
-					JsonArray examples = entry1.get("senses").asArray().get(0).asObject().get("examples").asArray();
-					System.out.println(examples.get(0).asObject().get("text").asString());
-					//System.out.println("this works: "+get());
-				} catch (InterruptedException | ExecutionException e) {
-					// TODO Auto-generated catch block
+					JsonArray examples = entry1.get("senses").asArray();
+					JsonValue temp = null;
+					JsonArray out = null;
+					for(JsonValue jv : examples){
+						temp = jv.asObject().get("examples");
+						if(temp!=null){out = temp.asArray();break;}
+					}
+					if(out!=null){
+						String[] splitString = out.get(0).asObject().get("text").asString().split(def);
+						application.sayWord(1, "kal_diphone", splitString[0]);
+						application.sayWord(2, "kal_diphone", def);
+						application.sayWord(1, "kal_diphone", splitString[1]);
+						
+					}
+				} catch (InterruptedException ie){ie.printStackTrace();}catch(ExecutionException e) {
 					e.printStackTrace();
 				}
 			}

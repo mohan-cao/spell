@@ -23,7 +23,7 @@ import javafx.util.Duration;
 /**
  * A view-controller that is bound to the levels_layout fxml
  * @author Mohan Cao
- * @author Ryan MacMillan
+ * @author Ryan MacMillan (previously, code is now gone)
  */
 public class MainMenuController extends SceneController{
 	@FXML private Button nQuizBtn;

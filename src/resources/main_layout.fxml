@@ -9,7 +9,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<StackPane minHeight="600.0" minWidth="800.0" styleClass="blackbackgroundplain" stylesheets="@mainmenu.css" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.MainMenuController">
+<StackPane minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="800.0" styleClass="blackbackgroundplain" stylesheets="@mainmenu.css" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.MainMenuController">
    <children>
       <AnchorPane>
          <children>
@@ -29,17 +29,17 @@
             </StackPane>
             <VBox layoutX="20.0" layoutY="440.0" spacing="10.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0">
                <children>
-                  <Button fx:id="nQuizBtn" alignment="CENTER" mnemonicParsing="false" onMouseClicked="#newQuiz" prefHeight="40.0" prefWidth="200.0" text="New Spelling Quiz" wrapText="true">
+                  <Button fx:id="nQuizBtn" alignment="CENTER" mnemonicParsing="false" onMouseClicked="#newQuiz" prefHeight="40.0" prefWidth="200.0" text="New Game" wrapText="true">
                      <font>
                         <Font size="16.0" />
                      </font>
                   </Button>
-                  <Button fx:id="rMistakesBtn" alignment="CENTER" mnemonicParsing="false" onMouseClicked="#reviewMistakes" prefHeight="40.0" prefWidth="200.0" text="Review Mistakes" wrapText="true">
+                  <Button fx:id="rMistakesBtn" alignment="CENTER" mnemonicParsing="false" onMouseClicked="#reviewMistakes" prefHeight="40.0" prefWidth="200.0" text="Review Mode" wrapText="true">
                      <font>
                         <Font size="16.0" />
                      </font>
                   </Button>
-                  <Button fx:id="vStatsBtn" alignment="CENTER" mnemonicParsing="false" onMouseClicked="#viewStats" prefHeight="40.0" prefWidth="200.0" text="Spelling Statistics">
+                  <Button fx:id="vStatsBtn" alignment="CENTER" mnemonicParsing="false" onMouseClicked="#viewStats" prefHeight="40.0" prefWidth="200.0" text="Statistics">
                      <font>
                         <Font size="16.0" />
                      </font>

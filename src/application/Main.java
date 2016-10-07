@@ -233,6 +233,11 @@ public class Main extends Application implements MainInterface {
 			if(stage.getScene()==null){
 				root = screens.get(key);
 				stage.setScene(new Scene(root));
+				if(!stage.isMaximized()&&!stage.isFullScreen()){
+					stage.setHeight(root.prefHeight(-1));
+					stage.setWidth(root.prefWidth(-1));
+					stage.centerOnScreen();
+				}
 			}else{
 				root = screens.get(key);
 				stage.getScene().setRoot(root);
