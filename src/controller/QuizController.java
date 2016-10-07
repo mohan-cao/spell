@@ -8,6 +8,8 @@ import java.util.concurrent.ExecutionException;
 import javax.net.ssl.HttpsURLConnection;
 
 import com.eclipsesource.json.Json;
+import com.eclipsesource.json.JsonArray;
+import com.eclipsesource.json.JsonObject;
 import com.eclipsesource.json.JsonValue;
 
 import application.ModelUpdateEvent;
@@ -139,8 +141,11 @@ public class QuizController extends SceneController{
 			}
 			public void done(){
 				try {
-					JsonValue json = Json.parse(get());
-					//json.
+					JsonObject json = Json.parse(get()).asObject();
+					JsonObject result1 = json.get("results").asArray().get(0).asObject();
+					JsonObject entry1 = result1.get("lexicalEntries").asArray().get(0).asObject().get("entries").asArray().get(0).asObject();
+					JsonArray examples = entry1.get("senses").asArray().get(0).asObject().get("examples").asArray();
+					System.out.println(examples.get(0).asObject().get("text").asString());
 					System.out.println("this works: "+get());
 				} catch (InterruptedException | ExecutionException e) {
 					// TODO Auto-generated catch block

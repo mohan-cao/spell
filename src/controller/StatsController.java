@@ -6,6 +6,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.ExecutionException;
+import java.util.function.Predicate;
 
 import com.sun.javafx.collections.ObservableListWrapper;
 
@@ -198,7 +199,6 @@ public class StatsController extends SceneController{
 	 */
 	private void statsChange(final StoredStats stats){
 		barChartView.getData().clear();
-		if(statsTable.getItems()!=null) statsTable.getItems().clear();statsTable.layout();
 		final int mastered=stats.getTotalStatsOfType(Type.MASTERED);
 		final int faulted=stats.getTotalStatsOfType(Type.FAULTED);
 		final int failed=stats.getTotalStatsOfType(Type.FAILED);
@@ -251,9 +251,23 @@ public class StatsController extends SceneController{
 					statsTable.getColumns().add(failedColumn);
 					statsTable.getColumns().add(masteryColumn);
 					statsTable.setItems(obs);
+					//predicate for words
 					
 					//make obs filterable
-					FilteredList<Word> filterable = new FilteredList<>(obs, p->true);
+					FilteredList<Word> filterable = new FilteredList<>(obs, p-> {
+						String newData = filterField.textProperty().get();
+						if(newData==null||newData.isEmpty()) return true;
+						String lowerFilter = newData.toLowerCase();
+						if(lowerFilter.matches("^[0-9]+")){
+							if(Integer.parseInt(lowerFilter)==p.getLProperty()){
+								return true;
+							}
+						}
+						if(p.getWProperty().contains(lowerFilter)){
+							return true;
+						}
+						return false;
+					});
 					filterField.textProperty().addListener((o,oldData,newData) -> {
 						filterable.setPredicate(p -> {
 							if(newData==null||newData.isEmpty()) return true;
@@ -263,7 +277,7 @@ public class StatsController extends SceneController{
 									return true;
 								}
 							}
-							if(lowerFilter.equals(p.getWProperty())){
+							if(p.getWProperty().contains(lowerFilter)){
 								return true;
 							}
 							return false;

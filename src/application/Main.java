@@ -300,8 +300,8 @@ public class Main extends Application implements MainInterface {
 				protected Integer call() throws Exception {
 					BufferedWriter bw = new BufferedWriter(new PrintWriter(_pb.getOutputStream()));
 					for (int i = 0; i < words.length; i++) {
-						bw.write("(Parameter.set 'Duration_Stretch " + speed + ")");
 						bw.write("(voice_" + voice + ")");
+						bw.write("(Parameter.set 'Duration_Stretch " + speed + ")");
 						bw.write("(SayText \"" + words[i] + "\")");
 					}
 					bw.flush();
@@ -336,6 +336,7 @@ public class Main extends Application implements MainInterface {
 		festivalService.setWordsToList(speed, words);
 		if (!festivalTasks.isEmpty()) {
 			festivalTasks.add(festivalService.createTask());
+			return;
 		}
 		Task<Integer> festivalTask = festivalService.createTask();
 		new Thread(festivalTask).start();
