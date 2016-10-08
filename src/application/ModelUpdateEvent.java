@@ -187,7 +187,7 @@ public class ModelUpdateEvent {
 		IntroController ic = (IntroController) _sc;
 		switch(_message){
 		case "requestLevels":
-			int size = ApplicationUtility.evaluateMaxLevelInStats(_statsModel.getGlobalStats());
+			int size = ApplicationUtility.evaluateMaxLevelInStats(_statsModel.getCurrentList());
 			int[] levels = new int[size];
 			for(int i=0;i<size;i++){
 				levels[i] = i+1;

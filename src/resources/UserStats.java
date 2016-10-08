@@ -20,10 +20,8 @@ public class UserStats implements Serializable{
 	private static final long serialVersionUID = 1L;
 	private HashMap<String,Stats> _stats;
 	private HashMap<Integer,Boolean> _unlockedLevels;
-	private HashMap<String,File> _spellingListPath;
-	private String _currentListKey;
-	private String _preferredVoice;
-	private boolean _musicMuted;
+	
+	
 	/**
 	 * Defines type of statistic being stored.
 	 * @author Mohan Cao
@@ -134,10 +132,6 @@ public class UserStats implements Serializable{
 	 * Initialises at level 0 (global) by default.
 	 */
 	public UserStats(){
-		_spellingListPath = new HashMap<String,File>();
-		File f = new File(SettingsModel.DEFAULT_WORDLIST);
-		_spellingListPath.put("Default Word-list",f);
-		_currentListKey = "Default Word-list";
 		clearStats();
 		resetLevelProgress();
 	}
@@ -311,27 +305,5 @@ public class UserStats implements Serializable{
 			return null;
 		}
 	}
-	public void addWordListPath(String path){
-		File f = new File(path);
-		_spellingListPath.put(f.getName(),f);
-	}
-	public Set<String> getWordListsName() {
-		return _spellingListPath.keySet();
-	}
-	public boolean setCurrentList(String key){
-		if(_spellingListPath.containsKey(key)){
-			_currentListKey = key;
-			return true;
-		}
-		return false;
-	}
-	public String getPreferredVoice() {
-		return _preferredVoice;
-	}
-	public void setPreferredVoice(String newValue) {
-		_preferredVoice = newValue;
-	}
-	public File getCurrentList() {
-		return _spellingListPath.get(_currentListKey);
-	}
+
 }

@@ -102,6 +102,7 @@ public class Main extends Application implements MainInterface {
 
 	public Object loadObjectFromFile(String path) {
 		try {
+			logger.debug("loaded from "+path);
 			File file = new File(path);
 			if (!file.exists()) {
 				return null;
@@ -125,6 +126,7 @@ public class Main extends Application implements MainInterface {
 
 	public boolean writeObjectToFile(String path, Object obj) {
 		try {
+			logger.debug("saved to"+path);
 			File file = new File(path);
 			FileOutputStream fileout = new FileOutputStream(file);
 			ObjectOutputStream outstr = new ObjectOutputStream(fileout);

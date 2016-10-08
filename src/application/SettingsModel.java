@@ -12,6 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javafx.scene.control.Alert;
+import resources.ApplicationStorage;
 import resources.UserStats;
 /**
  * Statistics model class
@@ -23,9 +24,11 @@ import resources.UserStats;
 public class SettingsModel {
 	final Logger logger = LoggerFactory.getLogger(SettingsModel.class);
 	public static final String DEFAULT_WORDLIST;
-	public static final String STATS_PATH = System.getProperty("user.dir")+"/.user/stats.ser";
+	//public static final String STATS_PATH = System.getProperty("user.dir")+"/.user/stats.ser";
+	public static final String SETTINGS_PATH = System.getProperty("user.dir")+"/.user/settings.bin";
 	private UserStats sessionStats;
 	private UserStats globalStats;
+	private ApplicationStorage appStorage;
 	private MainInterface application;
 	private boolean _isFirstTime;
 	
@@ -57,27 +60,38 @@ public class SettingsModel {
 		sessionStats = new UserStats();
 		application = main;
 		_isFirstTime = false;
-		//create new stats file if it does not exist
-		File file = new File(STATS_PATH);
+		//initiate application storage. create one if not present.
+		File file = new File(SETTINGS_PATH);
 		if(!file.exists()){
 			file.getParentFile().mkdirs();
-			try {
-				FileOutputStream fo = new FileOutputStream(file);
-				ObjectOutputStream oos = new ObjectOutputStream(fo);
-				oos.writeObject(new UserStats());
-				oos.close();
-				fo.close();
+			application.writeObjectToFile(file.getAbsolutePath(), new ApplicationStorage());
+		}
+		if(main!=null){
+			Object temp = application.loadObjectFromFile(SETTINGS_PATH);
+			if(temp instanceof ApplicationStorage){
+				appStorage = (ApplicationStorage)temp;
+			}else{
+				logger.debug("application settings class: "+temp.getClass());
+				Alert alert = new Alert(Alert.AlertType.INFORMATION, "Your settings file was corrupted or outdated.\nIt is now updated to a newer version");
+				alert.showAndWait();
+				appStorage = new ApplicationStorage();
 				_isFirstTime = true;
-			} catch (IOException e) {
-				logger.error(e.getMessage());
 			}
+		}
+		//create new stats file if it does not exist
+		File file1 = new File(getAbsoluteStatsPath(appStorage.getCurrentList()));
+		if(!file1.exists()){
+			file1.getParentFile().mkdirs();
+			application.writeObjectToFile(file1.getAbsolutePath(), new UserStats());
+			_isFirstTime =true;
 		}
 		//load global stats using the application model if possible
 		if(main!=null){
-			Object temp = application.loadObjectFromFile(STATS_PATH);
+			Object temp = application.loadObjectFromFile(getAbsoluteStatsPath(appStorage.getCurrentList()));
 			if(temp instanceof UserStats){
 				globalStats = (UserStats)temp;
 			}else{
+				logger.debug("stats list class: "+temp.getClass());
 				Alert alert = new Alert(Alert.AlertType.INFORMATION, "Your stats file was corrupted or outdated.\nIt is now updated to a newer version");
 				alert.showAndWait();
 				globalStats = new UserStats();
@@ -94,12 +108,16 @@ public class SettingsModel {
 	 */
 	public void sessionEnd(){
 		logger.debug("session ended, storing stats.");
-		if(globalStats==null){return;}
-		logger.debug("session stats levels unlocked:"+sessionStats.getUnlockedLevelSet());
-		globalStats.addStats(sessionStats);
-		logger.debug("global stats levels unlocked:"+globalStats.getUnlockedLevelSet());
-		sessionStats.clearStats();
-		application.writeObjectToFile(STATS_PATH, globalStats);
+		if(globalStats!=null){
+			logger.debug("session stats levels unlocked:"+sessionStats.getUnlockedLevelSet());
+			globalStats.addStats(sessionStats);
+			logger.debug("global stats levels unlocked:"+globalStats.getUnlockedLevelSet());
+			sessionStats.clearStats();
+			application.writeObjectToFile(getAbsoluteStatsPath(appStorage.getCurrentList()), globalStats);
+		}
+		if(appStorage!=null){
+			application.writeObjectToFile(SETTINGS_PATH, appStorage);
+		}
 	}
 	/**
 	 * Gets session stats.
@@ -137,35 +155,63 @@ public class SettingsModel {
 	public void setMain(MainInterface main){
 		application = main;
 	}
+	private String getAbsoluteStatsPath(File spellinglist){
+		return System.getProperty("user.dir")+"/.user/"+spellinglist.getName()+".ser";
+	}
 	/**
 	 * Gets word list paths from stored stats
 	 * @return
 	 */
 	public Set<String> wordListsPath() {
-		return (globalStats!=null)?globalStats.getWordListsName():sessionStats.getWordListsName();
+		return appStorage.getWordListsName();
 	}
 	public File getCurrentList(){
-		logger.debug("got word list"+globalStats.getCurrentList());
-		return globalStats.getCurrentList();
+		logger.debug("got word list"+appStorage.getCurrentList());
+		return appStorage.getCurrentList();
 	}
 	/**
 	 * Adds word to word list path for global stats
 	 * @param path
 	 */
 	public void addWordListPath(String path){
-		if(new File(path).exists()&&globalStats!=null){
-			globalStats.addWordListPath(path);
+		if(new File(path).exists()){
+			appStorage.addWordListPath(path);
 		}
 	}
+	/**
+	 * Sets the word list.
+	 * This method ENDS the current session. Do not use it during a game or an inconsistent state may occur.
+	 * @param list
+	 */
 	public void setWordList(String list){
+		//Set word list in application storage. First ends session with current list.
 		logger.debug("set word list" + list);
-		if(globalStats!=null)globalStats.setCurrentList(list);
+		sessionEnd();
+		appStorage.setCurrentList(list);
+		//then load list stats
+		Object temp = application.loadObjectFromFile(getAbsoluteStatsPath(appStorage.getCurrentList()));
+		if(temp instanceof UserStats){
+			globalStats = (UserStats)temp;
+		}else{
+			Alert alert = new Alert(Alert.AlertType.INFORMATION, "Your stats file was corrupted or outdated.\nIt is now updated to a newer version");
+			alert.showAndWait();
+			globalStats = new UserStats();
+			_isFirstTime = true;
+		}
 	}
+	/**
+	 * Gets preferred voice
+	 * @return
+	 */
 	public String preferredVoice(){
-		return (globalStats!=null)?globalStats.getPreferredVoice():sessionStats.getPreferredVoice();
+		return appStorage.getPreferredVoice();
 	}
+	/**
+	 * Sets preferred voice
+	 * @param newValue
+	 */
 	public void setPreferredVoice(String newValue) {
-		if(globalStats!=null)globalStats.setPreferredVoice(newValue);
+		appStorage.setPreferredVoice(newValue);
 	}
 	
 }

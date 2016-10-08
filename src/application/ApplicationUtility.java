@@ -9,13 +9,13 @@ import java.net.URISyntaxException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import resources.ApplicationStorage;
 import resources.UserStats;
 
 public final class ApplicationUtility {
 	static Logger logger = LoggerFactory.getLogger(ApplicationUtility.class);
-	public static int evaluateMaxLevelInStats(UserStats stats){
+	public static int evaluateMaxLevelInStats(File file){
 		try{
-			File file = stats.getCurrentList();
 			logger.debug("wordlist" + file);
 			if(!file.exists()){
 				return 0;
