@@ -186,7 +186,7 @@ public class QuizController extends SceneController{
 					}
 					
 				} catch (InterruptedException ie){logger.error(ie.getMessage());}catch(ExecutionException e) {
-					e.printStackTrace();
+					logger.error(e.getLocalizedMessage());
 				}
 			}
 		};

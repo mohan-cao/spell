@@ -107,6 +107,10 @@ public class MainMenuController extends SceneController{
 		media.pause();
 		application.requestSceneChange("levelMenu","failed");
 	}
+	@FXML public void changeSettings(MouseEvent e){
+		media.pause();
+		application.requestSceneChange("settingsMenu");
+	}
 	@Override
 	public void init(String[] args) {
 		media.play();

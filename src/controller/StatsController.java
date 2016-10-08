@@ -39,8 +39,8 @@ import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
-import resources.StoredStats;
-import resources.StoredStats.Type;
+import resources.UserStats;
+import resources.UserStats.Type;
 /**
  *
  * A view-controller that is bound to the stats_layout fxml
@@ -138,7 +138,6 @@ public class StatsController extends SceneController{
 				}
 			}
 		});
-		statsSelection.layout();
 	}
 	/**
 	 * Listener for quit to main menu navigation button
@@ -180,7 +179,7 @@ public class StatsController extends SceneController{
 	 * @param stats
 	 * @return
 	 */
-	public ObservableList<Word> generateList(final StoredStats stats){
+	public ObservableList<Word> generateList(final UserStats stats){
 		List<Word> wordlist = new LinkedList<Word>();
 		for(String key : stats.getKeys()){
 			int mastered = stats.getStat(Type.MASTERED, key);
@@ -197,7 +196,7 @@ public class StatsController extends SceneController{
 	 * Detailed stats are created (in another thread) and displayed in a text area.
 	 * @param stats
 	 */
-	private void statsChange(final StoredStats stats){
+	private void statsChange(final UserStats stats){
 		barChartView.getData().clear();
 		final int mastered=stats.getTotalStatsOfType(Type.MASTERED);
 		final int faulted=stats.getTotalStatsOfType(Type.FAULTED);
@@ -300,10 +299,10 @@ public class StatsController extends SceneController{
 	public void onModelChange(String notificationString, Object... objectParameters) {
 		switch(notificationString){
 		case "globalStatsLoaded":
-			statsChange((StoredStats)objectParameters[0]);
+			statsChange((UserStats)objectParameters[0]);
 			break;
 		case "sessionStatsLoaded":
-			statsChange((StoredStats)objectParameters[0]);
+			statsChange((UserStats)objectParameters[0]);
 			break;
 		}
 	}

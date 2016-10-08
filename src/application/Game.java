@@ -17,7 +17,7 @@ import org.slf4j.LoggerFactory;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ButtonType;
-import resources.StoredStats.Type;
+import resources.UserStats.Type;
 /**
  * Game model class
  * Contains the logic for evaluating words and storing game state, and acts as the Game data model.
@@ -32,12 +32,11 @@ import resources.StoredStats.Type;
 public class Game {
 	final Logger logger = LoggerFactory.getLogger(Game.class);
 	public static final int WORDS_NUM = 10;
-	public static final String WORDLIST = "NZCER-spelling-lists.txt";
 	public static final int SAY_SPEED_INTRO = 1;
 	public static final int SAY_SPEED_DEFAULT = 1;
 	public static final int SAY_SPEED_SLOW = 2;
 	public static final int SAY_SPEED_VERYSLOW = 3;
-	private StatisticsModel stats;
+	private SettingsModel stats;
 	private MainInterface main;
 	private List<String> wordList;
 	
@@ -51,16 +50,18 @@ public class Game {
 	private int _correct;
 	private int _incorrect;
 	
+	
+	
 	private String voiceType;
 	
-	public Game(MainInterface app, StatisticsModel statsModel){
+	public Game(MainInterface app, SettingsModel statsModel){
 		this(app,statsModel,1);
 	}
-	public Game(MainInterface app, StatisticsModel statsModel, int level){
+	public Game(MainInterface app, SettingsModel statsModel, int level){
 		main = app;
 		stats = statsModel;
 		wordList = new LinkedList<String>();
-		voiceType = "kal_diphone"; //FIXME: CHECK WHICH VOICES ARE AVAILABLE ON ECE MACHINE
+		voiceType = stats.preferredVoice();
 		_level = level;
 	}
 	
@@ -120,8 +121,7 @@ public class Game {
 	 */
 	private boolean getWordList(){
 		try {
-			File path = new File(main.getClass().getProtectionDomain().getCodeSource().getLocation().toURI());
-			File file = new File(path.getParent()+"/"+WORDLIST);
+			File file = stats.wordListsPath().get(0);
 			if(!file.exists()){
 				Alert alert = new Alert(AlertType.ERROR,"You don't have a word list!\nPlease put one in "+main.getClass().getProtectionDomain().getCodeSource().getLocation().toURI().toString());
 				alert.showAndWait();

@@ -13,12 +13,16 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.io.PrintWriter;
+import java.io.Reader;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Queue;
+import java.util.Scanner;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -30,6 +34,7 @@ import controller.IntroController;
 import controller.LevelController;
 import controller.QuizController;
 import controller.SceneController;
+import controller.SettingsController;
 import controller.StatsController;
 import javafx.application.Application;
 import javafx.application.Platform;
@@ -46,14 +51,14 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
-import resources.StoredStats;
+import resources.UserStats;
 
 /**
  * Main entry class (Application) This class is the entry to the JavaFX
  * application Acts as the application model
  * 
  * @author Mohan Cao
- * @author Ryan MacMillan
+ * @author Ryan MacMillan (some partial code)
  *
  */
 public class Main extends Application implements MainInterface {
@@ -61,7 +66,7 @@ public class Main extends Application implements MainInterface {
 	private Map<String, Parent> screens; // maps keys to scenes
 	private Map<String, FXMLLoader> screenFXMLs; // maps keys to fxmlloaders, needed to get controllers
 	private SceneController currentController; // current controller to displayed scene
-	private StatisticsModel statsModel;
+	private SettingsModel statsModel;
 	private Game game;
 	private FestivalService festivalService;
 	private boolean _firstTimeRun;
@@ -70,7 +75,7 @@ public class Main extends Application implements MainInterface {
 		screens = new HashMap<String, Parent>();
 		screenFXMLs = new HashMap<String, FXMLLoader>();
 		_firstTimeRun = false;
-		statsModel = new StatisticsModel(this);
+		statsModel = new SettingsModel(this);
 		_firstTimeRun = statsModel.isFirstTime();
 		festivalService = new FestivalService();
 	}
@@ -109,7 +114,7 @@ public class Main extends Application implements MainInterface {
 		} catch (ClassNotFoundException e) {
 			logger.error("could not find class");
 		} catch (InvalidClassException ice) {
-			writeObjectToFile(path, new StoredStats());
+			writeObjectToFile(path, new UserStats());
 		} catch (IOException e) {
 			logger.error("could not read object from file");
 		}
@@ -139,7 +144,7 @@ public class Main extends Application implements MainInterface {
 	 * @author Mohan Cao
 	 * @author Ryan MacMillan
 	 */
-	private void exportResource(String resource, String newFilePath) throws IOException {
+	/*private void exportResource(String resource, String newFilePath) throws IOException {
 		InputStream stream = null;
 		OutputStream resStreamOut = null;
 		try {
@@ -157,7 +162,7 @@ public class Main extends Application implements MainInterface {
 			if(stream!=null)stream.close();
 			if(resStreamOut!=null)resStreamOut.close();
 		}
-	}
+	}*/
 	/**
 	 * Builds scenes for the application
 	 */
@@ -272,6 +277,7 @@ public class Main extends Application implements MainInterface {
 	private class FestivalService{
 		private Process _pb;
 		private String _voice;
+		private BufferedWriter bw;
 		{
 			try {
 				Process p = new ProcessBuilder("/bin/bash", "-c", "type -p festival").start();
@@ -283,10 +289,18 @@ public class Main extends Application implements MainInterface {
 					alert.showAndWait();
 				}else{
 					_pb = new ProcessBuilder(output).start();
+					bw = new BufferedWriter(new PrintWriter(_pb.getOutputStream()));
+					try {
+						bw.write("(audio_mode 'async)");
+						bw.flush();
+					} catch (IOException e) {
+						logger.error(e.getLocalizedMessage());
+					}
 				}
 			} catch (IOException e) {
 				logger.error("IOException "+e.getMessage());
 			}
+			
 		}
 		public void cleanup() {
 			if(_pb!=null)_pb.destroy();
@@ -296,7 +310,6 @@ public class Main extends Application implements MainInterface {
 		}
 		protected void sayWord(final double speed, final String... words) {
 			final String voice = _voice;
-			BufferedWriter bw = new BufferedWriter(new PrintWriter(_pb.getOutputStream()));
 			try {
 				for (int i = 0; i < words.length; i++) {
 				bw.write("(voice_" + voice + ")");
@@ -307,6 +320,24 @@ public class Main extends Application implements MainInterface {
 			} catch (IOException e) {
 				logger.error(e.getLocalizedMessage());
 			}
+		}
+		protected List<String> getVoiceList(){
+			
+			try {
+				List<String> list = new LinkedList<String>();
+				Process p = new ProcessBuilder("/bin/bash", "-c", "ls /usr/share/festival/voices/english").start();
+				p.waitFor();
+				Scanner scanner = new Scanner(p.getInputStream());
+				StringBuffer str = new StringBuffer();
+				while(scanner.hasNextLine()){
+					list.add(scanner.nextLine());
+				}
+				scanner.close();
+				return list;
+			} catch (IOException | InterruptedException e) {
+				logger.error(e.getLocalizedMessage());
+			}
+			return null;
 		}
 		
 	}
@@ -322,7 +353,9 @@ public class Main extends Application implements MainInterface {
 		festivalService.setVoice(voiceType);
 		if(words!=null&&words.length!=0)festivalService.sayWord(speed, words);
 	}
-
+	public List<String> getVoices() {
+		return festivalService.getVoiceList();
+	}
 	/**
 	 * Called by scene controller to update the main application
 	 * 
@@ -344,6 +377,8 @@ public class Main extends Application implements MainInterface {
 			mue.updateFromLevelController();
 		} else if (mue.getControllerClass().equals(IntroController.class)){
 			mue.updateFromIntroController();
+		} else if(mue.getControllerClass().equals(SettingsController.class)){
+			mue.updateFromSettingsController();
 		}
 	}
 

@@ -7,7 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import application.ModelUpdateEvent;
-import application.StatisticsModel;
+import application.SettingsModel;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -16,6 +16,7 @@ import javafx.scene.layout.TilePane;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.media.MediaView;
+import javafx.scene.text.Text;
 
 /**
  * A view-controller that is bound to the levels_layout fxml
@@ -101,9 +102,11 @@ public class LevelController extends SceneController {
 					levelStatsLbl.setText("Mastery (words mastered/total): "+masteredpercentage+"%");
 					currentHoveredButton = newBtn;
 				});
-				newBtn.setPrefSize(50, 50);
-				newBtn.setStyle("-fx-font-size: "+30+"px;");
-				newBtn.setText(""+i);
+				newBtn.setMinSize(50, 50);
+				newBtn.setPrefHeight(Button.USE_COMPUTED_SIZE);
+				Text text = new Text(""+i);
+				text.setStyle("-fx-font-size: "+(16+Math.min((i/10)*2,20))+"px;");
+				newBtn.setGraphic(text);
 				tileContainer.getChildren().add(newBtn);
 			}
 			break;

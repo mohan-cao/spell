@@ -16,8 +16,8 @@ import controller.LevelController;
 import controller.SceneController;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
-import resources.StoredStats;
-import resources.StoredStats.Type;
+import resources.UserStats;
+import resources.UserStats.Type;
 /**
  * Model update event class
  * Created by controllers to update the model.
@@ -29,7 +29,7 @@ public class ModelUpdateEvent {
 	private final String _message;
 	private final SceneController _sc;
 	private final Class<? extends SceneController> _class;
-	private StatisticsModel _statsModel;
+	private SettingsModel _statsModel;
 	private MainInterface _main;
 	private Game _game;
 	public ModelUpdateEvent(SceneController sc, String message){
@@ -51,7 +51,7 @@ public class ModelUpdateEvent {
 	 * Sets stats model in which this object will interact with
 	 * @param stats
 	 */
-	public void setStatsModel(StatisticsModel stats){
+	public void setStatsModel(SettingsModel stats){
 		_statsModel = stats;
 	}
 	/**
@@ -156,13 +156,13 @@ public class ModelUpdateEvent {
 			unlockedLevelSet.addAll(_statsModel.getSessionStats().getUnlockedLevelSet());
 			ArrayList<Integer> unlockedLevels = new ArrayList<Integer>(unlockedLevelSet);
 			Collections.sort(unlockedLevels);
-			StoredStats sStats = _statsModel.getGlobalStats();
-			StoredStats gStats = _statsModel.getSessionStats();
+			UserStats sStats = _statsModel.getGlobalStats();
+			UserStats gStats = _statsModel.getSessionStats();
 			int mastered = 0;
 			int failed = 0;
 			for(Integer i : unlockedLevels){
-				mastered = gStats.getTotalStatsOfLevel(i, StoredStats.Type.MASTERED)+sStats.getTotalStatsOfLevel(i, StoredStats.Type.MASTERED);
-				failed = gStats.getTotalStatsOfLevel(i, StoredStats.Type.FAILED)+gStats.getTotalStatsOfLevel(i, StoredStats.Type.FAULTED)+sStats.getTotalStatsOfLevel(i, StoredStats.Type.FAILED)+sStats.getTotalStatsOfLevel(i, StoredStats.Type.FAULTED);
+				mastered = gStats.getTotalStatsOfLevel(i, UserStats.Type.MASTERED)+sStats.getTotalStatsOfLevel(i, UserStats.Type.MASTERED);
+				failed = gStats.getTotalStatsOfLevel(i, UserStats.Type.FAILED)+gStats.getTotalStatsOfLevel(i, UserStats.Type.FAULTED)+sStats.getTotalStatsOfLevel(i, UserStats.Type.FAILED)+sStats.getTotalStatsOfLevel(i, UserStats.Type.FAULTED);
 				if((mastered+failed)!=0){
 					levelStats.add(i,(mastered)/(double)(failed+mastered));
 				}else{
@@ -187,7 +187,7 @@ public class ModelUpdateEvent {
 		IntroController ic = (IntroController) _sc;
 		switch(_message){
 		case "requestLevels":
-			int size = ApplicationUtility.evaluateMaxLevelInFile();
+			int size = ApplicationUtility.evaluateMaxLevelInStats(_statsModel.getGlobalStats());
 			int[] levels = new int[size];
 			for(int i=0;i<size;i++){
 				levels[i] = i+1;
@@ -203,7 +203,18 @@ public class ModelUpdateEvent {
 			break;
 		}
 	}
-	
+	/**
+	 * Should be called if class is an update from a level controller
+	 * This must be called by the main application, and will not be called automatically
+	 */
+	public void updateFromSettingsController() {
+		switch(_message){
+		case "fetchSettings":
+			_sc.onModelChange("settingsReady", _statsModel);
+			break;
+		default:
+		}
+	}
 	
 	/**
 	 * Sets the game to the MainController's game
@@ -227,6 +238,7 @@ public class ModelUpdateEvent {
 		mue.setGame(_game);
 		_main.update(mue);
 	}
+	
 }
 /**
  * Empty class representing a game update event.

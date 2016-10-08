@@ -9,12 +9,14 @@ import java.net.URISyntaxException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import resources.UserStats;
+
 public final class ApplicationUtility {
 	static Logger logger = LoggerFactory.getLogger(ApplicationUtility.class);
-	public static int evaluateMaxLevelInFile(){
+	public static int evaluateMaxLevelInStats(UserStats stats){
 		try{
-			File path = new File(ApplicationUtility.class.getProtectionDomain().getCodeSource().getLocation().toURI());
-			File file = new File(path.getParent()+"/"+Game.WORDLIST);
+			if(stats.getWordListsPath()==null||stats.getWordListsPath().isEmpty()) return 0;
+			File file = stats.getWordListsPath().get(0);
 			if(!file.exists()){
 				return 0;
 			}
@@ -32,8 +34,6 @@ public final class ApplicationUtility {
 			return level;
 		}catch(IOException io){
 			logger.error("could not find wordlist");
-		} catch (URISyntaxException e) {
-			logger.error("url incorrect");
 		}
 		return 0;
 	}

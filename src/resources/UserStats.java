@@ -1,20 +1,28 @@
 package resources;
 
+import java.io.File;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Set;
+
+import application.SettingsModel;
 
 /**
  * The serializable spelling statistics class that stores all statistics for VoxSpell
  * @author Mohan Cao
  *
  */
-public class StoredStats implements Serializable{
+public class UserStats implements Serializable{
 	private static final long serialVersionUID = 1L;
 	private HashMap<String,Stats> _stats;
 	private HashMap<Integer,Boolean> _unlockedLevels;
+	private List<File> _spellingListPath;
+	private String _preferredVoice;
+	private boolean _musicMuted;
 	/**
 	 * Defines type of statistic being stored.
 	 * @author Mohan Cao
@@ -124,7 +132,8 @@ public class StoredStats implements Serializable{
 	 * Default stats constructor
 	 * Initialises at level 0 (global) by default.
 	 */
-	public StoredStats(){
+	public UserStats(){
+		_spellingListPath = new LinkedList<File>();_spellingListPath.add(new File(SettingsModel.DEFAULT_WORDLIST));
 		clearStats();
 		resetLevelProgress();
 	}
@@ -206,7 +215,7 @@ public class StoredStats implements Serializable{
 	 * Adds stats object to existing stats object. Does not return new object.
 	 * @param other
 	 */
-	public void addStats(StoredStats other){
+	public void addStats(UserStats other){
 		for(String key : other.getKeys()){
 			this.addStat(Type.MASTERED, key, other.getStat(Type.MASTERED, key), other.getLevel(key));
 			this.addStat(Type.FAULTED, key, other.getStat(Type.FAULTED, key), other.getLevel(key));
@@ -297,5 +306,17 @@ public class StoredStats implements Serializable{
 		else{
 			return null;
 		}
+	}
+	public void addWordListPath(String path){
+		_spellingListPath.add(new File(path));
+	}
+	public List<File> getWordListsPath() {
+		return _spellingListPath;
+	}
+	public String getPreferredVoice() {
+		return _preferredVoice;
+	}
+	public void setPreferredVoice(String newValue) {
+		_preferredVoice = newValue;
 	}
 }

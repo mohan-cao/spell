@@ -1,5 +1,6 @@
 package application;
 import java.util.Collection;
+import java.util.List;
 
 import javafx.stage.Stage;
 /**
@@ -59,5 +60,10 @@ public interface MainInterface {
 	 * @param string Sequence of strings
 	 */
 	public void sayWord(final double i, final String voice, final String... string);
+	/**
+	 * Gets a list of voices from festival
+	 * @return list of strings
+	 */
+	public List<String> getVoices();
 	
 }
