@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.net.URISyntaxException;
 import java.util.List;
+import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -137,26 +138,34 @@ public class SettingsModel {
 		application = main;
 	}
 	/**
-	 * Gets word list path from stored stats
+	 * Gets word list paths from stored stats
 	 * @return
 	 */
-	public List<File> wordListsPath() {
-		return (globalStats!=null)?globalStats.getWordListsPath():sessionStats.getWordListsPath();
+	public Set<String> wordListsPath() {
+		return (globalStats!=null)?globalStats.getWordListsName():sessionStats.getWordListsName();
+	}
+	public File getCurrentList(){
+		logger.debug("got word list"+globalStats.getCurrentList());
+		return globalStats.getCurrentList();
 	}
 	/**
-	 * Sets word list path for global stats
+	 * Adds word to word list path for global stats
 	 * @param path
 	 */
-	public void setWordListPath(String path){
-		if(new File(path).exists()){
+	public void addWordListPath(String path){
+		if(new File(path).exists()&&globalStats!=null){
 			globalStats.addWordListPath(path);
 		}
+	}
+	public void setWordList(String list){
+		logger.debug("set word list" + list);
+		if(globalStats!=null)globalStats.setCurrentList(list);
 	}
 	public String preferredVoice(){
 		return (globalStats!=null)?globalStats.getPreferredVoice():sessionStats.getPreferredVoice();
 	}
 	public void setPreferredVoice(String newValue) {
-		globalStats.setPreferredVoice(newValue);
+		if(globalStats!=null)globalStats.setPreferredVoice(newValue);
 	}
 	
 }

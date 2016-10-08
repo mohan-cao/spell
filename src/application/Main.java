@@ -117,6 +117,8 @@ public class Main extends Application implements MainInterface {
 			writeObjectToFile(path, new UserStats());
 		} catch (IOException e) {
 			logger.error("could not read object from file");
+		} catch (ClassCastException ce) {
+			writeObjectToFile(path, new UserStats());
 		}
 		return null;
 	}

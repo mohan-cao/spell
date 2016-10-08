@@ -15,8 +15,8 @@ public final class ApplicationUtility {
 	static Logger logger = LoggerFactory.getLogger(ApplicationUtility.class);
 	public static int evaluateMaxLevelInStats(UserStats stats){
 		try{
-			if(stats.getWordListsPath()==null||stats.getWordListsPath().isEmpty()) return 0;
-			File file = stats.getWordListsPath().get(0);
+			File file = stats.getCurrentList();
+			logger.debug("wordlist" + file);
 			if(!file.exists()){
 				return 0;
 			}

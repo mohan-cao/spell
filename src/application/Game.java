@@ -121,7 +121,7 @@ public class Game {
 	 */
 	private boolean getWordList(){
 		try {
-			File file = stats.wordListsPath().get(0);
+			File file = stats.getCurrentList();
 			if(!file.exists()){
 				Alert alert = new Alert(AlertType.ERROR,"You don't have a word list!\nPlease put one in "+main.getClass().getProtectionDomain().getCodeSource().getLocation().toURI().toString());
 				alert.showAndWait();
