@@ -48,7 +48,7 @@ public class MainMenuController extends SceneController{
 	@FXML public void runOnce(){
 		isMuted=false;
 		try {
-			media = new MediaPlayer(new Media(getClass().getClassLoader().getResource("resources/Carpe Diem.mp3").toURI().toString()));
+			media = new MediaPlayer(new Media(getClass().getClassLoader().getResource("resources/Home.mp3").toURI().toString()));
 			media.setAutoPlay(false);
 			media.setCycleCount(Integer.MAX_VALUE);
 		} catch (URISyntaxException e) {

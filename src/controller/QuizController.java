@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.concurrent.ExecutionException;
 
@@ -29,6 +30,8 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.FlowPane;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
 import javafx.scene.paint.Paint;
 
 /**
@@ -54,6 +57,17 @@ public class QuizController extends SceneController{
 		Tooltip repeat = new Tooltip("Say the word again");
 		Tooltip.install(voiceBtn,tts);
 		Tooltip.install(repeatBtn, repeat);
+		
+	}
+	
+	public MediaPlayer getAudioFromResources(String resource){
+		try {
+			MediaPlayer media = new MediaPlayer(new Media(getClass().getClassLoader().getResource(resource).toURI().toString()));
+			return media;
+		} catch (URISyntaxException e) {
+			logger.error("media isnt work sorry");
+		}
+		return null;
 	}
 	
 	/**
@@ -212,11 +226,13 @@ b	 * Gets text area input
 					+ "You may also change the voice if you find it necessary.");
 			break;
 		case "resetGame":
+			MediaPlayer media = getAudioFromResources("resources/victory announcer.mp3");
+			media.play();
 			outputLabel.setText("Well done!");
 			outputLabel.setTextFill(Paint.valueOf("black"));
-			if(objectParameters.length==2){
+			if(objectParameters.length==3){
 				correctWordLabel.setText("You got "+objectParameters[0]+" out of "+objectParameters[1]+" words correct.");
-			}else if(objectParameters.length==3){
+			}else if(objectParameters.length==4){
 				correctWordLabel.setText("You got "+objectParameters[0]+" out of "+objectParameters[1]+" words correct."
 					+ "\nThe last word was \""+objectParameters[2]+"\"");
 			}

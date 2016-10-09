@@ -184,6 +184,9 @@ public class ModelUpdateEvent {
 			sendGameUpdateRequest();
 			_main.requestSceneChange("quizMenu","failed");
 			break;
+		case "getMutedPreference":
+			_sc.onModelChange("settingsReady", _statsModel);
+			break;
 		}
 	}
 	public void updateFromIntroController(){

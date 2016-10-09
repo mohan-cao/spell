@@ -100,6 +100,10 @@ public class SettingsModel {
 			}
 		}
 	}
+	/**
+	 * Returns true if application is launched for very first time.
+	 * @return
+	 */
 	public boolean isFirstTime(){
 		return _isFirstTime;
 	}
@@ -156,6 +160,21 @@ public class SettingsModel {
 	public void setMain(MainInterface main){
 		application = main;
 	}
+	
+	public boolean updateHighScore(int level,long highscore){
+		logger.debug("Highscore being saved: "+highscore);
+		return sessionStats.updateHighScore(level, highscore);
+	}
+	public long getHighScore(int level){
+		return Math.max(sessionStats.getHighScore(level), globalStats.getHighScore(level));
+	}
+	
+	
+	/**
+	 * Gets absolute path of stats file
+	 * @param spellinglist
+	 * @return
+	 */
 	private String getAbsoluteStatsPath(File spellinglist){
 		return System.getProperty("user.dir")+"/.user/"+spellinglist.getName()+".ser";
 	}
@@ -194,14 +213,9 @@ public class SettingsModel {
 		if(temp instanceof UserStats){
 			globalStats = (UserStats)temp;
 		}else{
-			Alert alert = new Alert(Alert.AlertType.INFORMATION, "Your stats file was corrupted or outdated.\nIt is now updated to a newer version");
-			alert.showAndWait();
 			globalStats = new UserStats();
 			_isFirstTime = true;
 		}
-	}
-	public List<String> getAvailableVoices(){
-		return application.getVoices();
 	}
 	/**
 	 * Gets preferred voice

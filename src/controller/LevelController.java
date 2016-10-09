@@ -31,6 +31,7 @@ public class LevelController extends SceneController {
 	private MediaPlayer media;
 	private LevelButton lastButtonClicked;
 	private Button currentHoveredButton;
+	private boolean isMuted;
 	/**
 	 * A small TitledPane that remembers its level.
 	 * @author Mohan Cao
@@ -52,8 +53,9 @@ public class LevelController extends SceneController {
 	@Override
 	@FXML public void runOnce(){
 		try {
-			media = new MediaPlayer(new Media(getClass().getClassLoader().getResource("resources/levelannouncer.mp3").toURI().toString()));
+			media = new MediaPlayer(new Media(getClass().getClassLoader().getResource("resources/KingOfTheDesertLoop.mp3").toURI().toString()));
 			media.setAutoPlay(false);
+			media.setCycleCount(Integer.MAX_VALUE);
 		} catch (URISyntaxException e) {
 			logger.error("media isnt work sorry");
 		}
@@ -65,13 +67,11 @@ public class LevelController extends SceneController {
 	 */
 	@FXML
 	public void quitToMainMenu(MouseEvent me){
+		media.pause();
 		application.requestSceneChange("mainMenu");
 	}
 	@Override
 	public void init(String[] args) {
-		//empty for subclasses to override
-		media.stop();
-		media.play();
 		tileContainer.getChildren().clear();
 		application.update(new ModelUpdateEvent(this, "levelViewLoaded"));
 		if(args!=null && args.length>0 && args[0].equals("failed")){
@@ -80,6 +80,8 @@ public class LevelController extends SceneController {
 			review = false;
 		}
 		application.update(new ModelUpdateEvent(this, "requestLevels"));
+		application.update(new ModelUpdateEvent(this,"getMutedPreference"));
+		if(!isMuted)media.play();
 	}
 	@Override
 	public void onModelChange(String fieldName, Object...objects) {
@@ -91,8 +93,10 @@ public class LevelController extends SceneController {
 				newBtn.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> {
 					lastButtonClicked=newBtn;
 					if(review){
+						media.pause();
 						application.update(new ModelUpdateEvent(this,"startReviewGame"));
 					}else{
+						media.pause();
 						application.update(new ModelUpdateEvent(this,"startNewGame"));
 					}
 				});
@@ -110,6 +114,9 @@ public class LevelController extends SceneController {
 				tileContainer.getChildren().add(newBtn);
 			}
 			break;
+		case "settingsReady":
+			SettingsModel sm = (SettingsModel)objects[0];
+			isMuted = sm.isMuted();
 		}
 	}
 	@Override

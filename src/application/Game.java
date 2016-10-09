@@ -64,11 +64,15 @@ public class Game {
 	
 	private List<String> voices;
 	private String voiceType;
+	private long highscore;
+	private int streak;
 	
 	public Game(MainInterface app, SettingsModel statsModel){
 		this(app,statsModel,1);
 	}
 	public Game(MainInterface app, SettingsModel statsModel, int level){
+		highscore = 0;
+		streak = 0;
 		main = app;
 		stats = statsModel;
 		wordList = new LinkedList<String>();
@@ -277,7 +281,9 @@ public class Game {
 			faulted=!word.toLowerCase().equals(testWord.toLowerCase());
 			if(!faulted&&!prevFaulted){
 				//mastered
-				main.tell("masteredWord",testWord);
+				streak++;
+				highscore+=1000+((streak-2>0)?streak-2:0)*500;
+				main.tell("masteredWord",testWord,highscore);
 				faulted=false;
 				stats.getSessionStats().addStat(Type.MASTERED,testWord, 1, _level);
 				_correct++;
@@ -291,25 +297,27 @@ public class Game {
 				wordList.remove(0);
 			}else if(faulted&&!prevFaulted){
 				//faulted once => set faulted
-				main.tell("faultedWord",testWord);
+				streak = 0;
+				main.tell("faultedWord",testWord,highscore);
 				speed = SAY_SPEED_SLOW;
 				main.sayWord(speed,voiceType, testWord);
 				main.sayWord(SAY_SPEED_DEFAULT,voiceType, "The word is");
 			}else if(!faulted&&prevFaulted){
 				//correct after faulted => store faulted
-				main.tell("masteredWord",testWord);
+				main.tell("masteredWord",testWord,highscore);
 				stats.getSessionStats().addStat(Type.FAULTED,testWord, 1, _level);
 				_incorrect++;
 				wordList.remove(0);
 			}else if(review&&!prev2Faulted){
 				//give one more chance in review, set speed to very slow
-				main.tell("lastChanceWord",testWord);
+				main.tell("lastChanceWord",testWord,highscore);
 				speed = SAY_SPEED_VERYSLOW;
 				main.sayWord(speed,voiceType, testWord);
 				main.sayWord(SAY_SPEED_DEFAULT,voiceType, "The word is");
 			}else{
 				//faulted twice => failed
-				main.tell("failedWord",testWord);
+				streak=0;
+				main.tell("failedWord",testWord,highscore);
 				faulted=false;
 				stats.getSessionStats().addStat(Type.FAILED, testWord, 1, _level);
 				wordList.remove(0);
@@ -319,10 +327,13 @@ public class Game {
 				main.sayWord(speed,voiceType, wordList.get(0));
 			}else{
 				//end game
+				stats.updateHighScore(_level, highscore);
+				highscore = 0;
+				streak =0;
 				if(prevFaulted||faulted||prev2Faulted){
-					main.tell("resetGame",_correct,(_correct+_incorrect),testWord);
+					main.tell("resetGame",_correct,(_correct+_incorrect),testWord,highscore);
 				}else{
-					main.tell("resetGame",_correct,(_correct+_incorrect));
+					main.tell("resetGame",_correct,(_correct+_incorrect),highscore);
 				}
 				
 				if(!review&&(_correct/(double)(_incorrect+_correct))>=0.9){
@@ -335,6 +346,10 @@ public class Game {
 			main.tell("setProgress",(wordListSize-wordList.size()+((faulted)?0.5:0))/(double)wordListSize);
 		}
 	}
+	/**
+	 * Gets an example of a word from the free Oxford Dictionary API (oxforddictionaries.com)
+	 * The example is read out loud for the user. Time is paused while the definition is read out.
+	 */
 	public void getAndSayExample(){
 		final String def = wordList.get(0);
 		Task<String> getreq = new Task<String>(){

@@ -20,7 +20,7 @@ public class UserStats implements Serializable{
 	private static final long serialVersionUID = 1L;
 	private HashMap<String,Stats> _stats;
 	private HashMap<Integer,Boolean> _unlockedLevels;
-	
+	private HashMap<Integer,Long> _levelHighScores;
 	
 	/**
 	 * Defines type of statistic being stored.
@@ -153,6 +153,9 @@ public class UserStats implements Serializable{
 	 * Resets all level progress
 	 */
 	public void resetLevelProgress(){
+		_levelHighScores = new HashMap<Integer,Long>();
+		_levelHighScores.put(0, 0l);
+		_levelHighScores.put(0, 0l);
 		_unlockedLevels = new HashMap<Integer,Boolean>();
 		_unlockedLevels.put(0, true);
 		_unlockedLevels.put(1, true);
@@ -218,6 +221,16 @@ public class UserStats implements Serializable{
 			this.addStat(Type.MASTERED, key, other.getStat(Type.MASTERED, key), other.getLevel(key));
 			this.addStat(Type.FAULTED, key, other.getStat(Type.FAULTED, key), other.getLevel(key));
 			this.addStat(Type.FAILED, key, other.getStat(Type.FAILED, key), other.getLevel(key));
+		}
+		for(Integer key : other._levelHighScores.keySet()){
+			if(this._levelHighScores.get(key)==null){
+				this._levelHighScores.put(key, other._levelHighScores.get(key));
+				continue;
+			}
+			long b = other._levelHighScores.get(key);
+			if(this._levelHighScores.get(key)-b < 0){
+				this._levelHighScores.put(key, b);
+			}
 		}
 		this._unlockedLevels.putAll(other._unlockedLevels);
 	}
@@ -305,5 +318,25 @@ public class UserStats implements Serializable{
 			return null;
 		}
 	}
-
+	/**
+	 * Updates high score if possible and returns a success value
+	 * @param level
+	 * @param highscore
+	 * @return
+	 */
+	public boolean updateHighScore(int level, long highscore){
+		long score = 0;
+		if(_levelHighScores.get(level)!=null){
+			score = _levelHighScores.get(level);
+		}
+		if(highscore > score){
+			_levelHighScores.put(level, highscore);
+			return true;
+		}
+		return false;
+	}
+	public long getHighScore(int level){
+		if(_levelHighScores.get(level)==null) _levelHighScores.put(level, 0l);
+		return _levelHighScores.get(level);
+	}
 }
