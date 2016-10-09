@@ -5,6 +5,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.net.URISyntaxException;
+import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
@@ -199,6 +200,9 @@ public class SettingsModel {
 			_isFirstTime = true;
 		}
 	}
+	public List<String> getAvailableVoices(){
+		return application.getVoices();
+	}
 	/**
 	 * Gets preferred voice
 	 * @return
@@ -213,5 +217,17 @@ public class SettingsModel {
 	public void setPreferredVoice(String newValue) {
 		appStorage.setPreferredVoice(newValue);
 	}
-	
+	/**
+	 * Checks if application settings prefers 'muted' right now
+	 * @return
+	 */
+	public boolean isMuted(){
+		return appStorage.muted();
+	}
+	/**
+	 * Toggles muted state
+	 */
+	public void toggle(){
+		appStorage.toggle();
+	}
 }

@@ -124,73 +124,7 @@ public class QuizController extends SceneController{
 	}
 	@FXML
 	public void getDefinition(MouseEvent me){
-		final String def = wordTextArea.getText();
-		Task<String> getreq = new Task<String>(){
-			private static final String app_id = "25890eb1";
-            private static final String app_key = "9f5c79bde4f7961c3e38d8f1c31e0a79";
-            private String getFromURL(final URL url) throws Exception{
-                HttpsURLConnection urlConnection2 = (HttpsURLConnection) url.openConnection();
-                urlConnection2.setRequestProperty("Accept","application/json");
-                urlConnection2.setRequestProperty("app_id",app_id);
-                urlConnection2.setRequestProperty("app_key",app_key);
-                // read the output from the server
-                BufferedReader reader2 = null;
-                reader2 = new BufferedReader(new InputStreamReader(urlConnection2.getInputStream()));
-                StringBuffer stringBuilder2 = new StringBuffer();
-                String line2 = null;
-                while ((line2 = reader2.readLine()) != null) {
-                    stringBuilder2.append(line2 + "\n");
-                }
-                return stringBuilder2.toString();
-            }
-			@Override
-			protected String call() throws Exception {
-				try{
-					return getFromURL(new URL("https://od-api.oxforddictionaries.com:443/api/v1/entries/en/"+def+"/examples"));
-				}catch(IOException ie){}
-                JsonObject json = Json.parse(getFromURL(new URL("https://od-api.oxforddictionaries.com:443/api/v1/inflections/en/"+def))).asObject();
-                JsonObject result1 = json.get("results").asArray().get(0).asObject();
-                String id = result1.get("lexicalEntries").asArray().get(0).asObject().get("inflectionOf").asArray().get(0).asObject().get("id").asString();
-                return getFromURL(new URL("https://od-api.oxforddictionaries.com:443/api/v1/entries/en/"+id+"/examples"));
-                
-			}
-			public void done(){
-				try {
-					JsonObject json = Json.parse(get()).asObject();
-					JsonObject result1 = json.get("results").asArray().get(0).asObject();
-					JsonObject entry1 = null;
-					for(JsonValue lexEntries : result1.get("lexicalEntries").asArray()){
-						String lexCat = lexEntries.asObject().getString("lexicalCategory", null);
-						if(lexCat!=null){
-							lexCat = lexCat.toLowerCase();
-							if(!lexCat.equals("residual")){
-								entry1 = lexEntries.asObject().get("entries").asArray().get(0).asObject();
-								break;
-							}
-						}
-					}
-					if(entry1==null)return;
-					JsonArray examples = entry1.get("senses").asArray();
-					JsonValue temp = null;
-					JsonArray out = null;
-					for(JsonValue jv : examples){
-						temp = jv.asObject().get("examples");
-						if(temp!=null){
-							out = temp.asArray();
-							if(out!=null){
-								String str = out.get(0).asObject().get("text").asString().replaceAll("[^\\sa-zA-Z0-9']", " ");
-								application.sayWord(1.3, "kal_diphone", str);
-								System.out.println(str);
-							}
-						}
-					}
-					
-				} catch (InterruptedException ie){logger.error(ie.getMessage());}catch(ExecutionException e) {
-					logger.error(e.getLocalizedMessage());
-				}
-			}
-		};
-		new Thread(getreq).start();
+		application.update(new ModelUpdateEvent(this,"getAndSayDefinition"));
 	}
 	/**
 	 * Validates input before sending it to the marking algorithm

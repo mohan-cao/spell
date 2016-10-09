@@ -4,16 +4,27 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.ExecutionException;
+
+import javax.net.ssl.HttpsURLConnection;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.eclipsesource.json.Json;
+import com.eclipsesource.json.JsonArray;
+import com.eclipsesource.json.JsonObject;
+import com.eclipsesource.json.JsonValue;
+
+import javafx.concurrent.Task;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ButtonType;
@@ -51,7 +62,7 @@ public class Game {
 	private int _incorrect;
 	
 	
-	
+	private List<String> voices;
 	private String voiceType;
 	
 	public Game(MainInterface app, SettingsModel statsModel){
@@ -62,6 +73,7 @@ public class Game {
 		stats = statsModel;
 		wordList = new LinkedList<String>();
 		voiceType = stats.preferredVoice();
+		voices = main.getVoices();
 		_level = level;
 	}
 	
@@ -86,16 +98,24 @@ public class Game {
 	}
 	/**
 	 * Toggles from kal_diphone voice to akl_nz_jdt_diphone or vice versa
+	 * @author Mohan Cao
 	 * @author Ryan MacMillan
 	 */
 	public void changeVoice(){
-		if(voiceType.equals("kal_diphone")){
-			voiceType = "akl_nz_jdt_diphone";
-			main.sayWord(SAY_SPEED_DEFAULT, voiceType, "Now using auckland new zealand jdt diphone");
-		}
-		else {
-			voiceType = "kal_diphone";
-			main.sayWord(SAY_SPEED_DEFAULT, voiceType, "Now using "+voiceType.replace("_", " "));
+		voiceType = voices.remove(0);
+		voices.add(voiceType);
+		
+		switch(voiceType){
+		case "kal_diphone":
+			main.sayWord(SAY_SPEED_DEFAULT, voiceType, "Using American English");
+			break;
+		case "akl_nz_jdt_diphone":
+			main.sayWord(SAY_SPEED_DEFAULT, voiceType, "Using New Zealand English");
+			break;
+		case "rab_diphone":
+			main.sayWord(SAY_SPEED_DEFAULT, voiceType, "Using British English");
+		default:
+			main.sayWord(SAY_SPEED_DEFAULT, voiceType, "Using "+voiceType.replace("_", " "));
 		}
 	}
 	/**
@@ -306,6 +326,74 @@ public class Game {
 			main.tell("setProgress",(wordListSize-wordList.size()+((faulted)?0.5:0))/(double)wordListSize);
 		}
 	}
-	
+	public void getAndSayExample(){
+		final String def = wordList.get(0);
+		Task<String> getreq = new Task<String>(){
+			private static final String app_id = "25890eb1";
+            private static final String app_key = "9f5c79bde4f7961c3e38d8f1c31e0a79";
+            private String getFromURL(final URL url) throws Exception{
+                HttpsURLConnection urlConnection2 = (HttpsURLConnection) url.openConnection();
+                urlConnection2.setRequestProperty("Accept","application/json");
+                urlConnection2.setRequestProperty("app_id",app_id);
+                urlConnection2.setRequestProperty("app_key",app_key);
+                // read the output from the server
+                BufferedReader reader2 = null;
+                reader2 = new BufferedReader(new InputStreamReader(urlConnection2.getInputStream()));
+                StringBuffer stringBuilder2 = new StringBuffer();
+                String line2 = null;
+                while ((line2 = reader2.readLine()) != null) {
+                    stringBuilder2.append(line2 + "\n");
+                }
+                return stringBuilder2.toString();
+            }
+			@Override
+			protected String call() throws Exception {
+				try{
+					return getFromURL(new URL("https://od-api.oxforddictionaries.com:443/api/v1/entries/en/"+def+"/examples"));
+				}catch(IOException ie){}
+                JsonObject json = Json.parse(getFromURL(new URL("https://od-api.oxforddictionaries.com:443/api/v1/inflections/en/"+def))).asObject();
+                JsonObject result1 = json.get("results").asArray().get(0).asObject();
+                String id = result1.get("lexicalEntries").asArray().get(0).asObject().get("inflectionOf").asArray().get(0).asObject().get("id").asString();
+                return getFromURL(new URL("https://od-api.oxforddictionaries.com:443/api/v1/entries/en/"+id+"/examples"));
+                
+			}
+			public void done(){
+				try {
+					JsonObject json = Json.parse(get()).asObject();
+					JsonObject result1 = json.get("results").asArray().get(0).asObject();
+					JsonObject entry1 = null;
+					for(JsonValue lexEntries : result1.get("lexicalEntries").asArray()){
+						String lexCat = lexEntries.asObject().getString("lexicalCategory", null);
+						if(lexCat!=null){
+							lexCat = lexCat.toLowerCase();
+							if(!lexCat.equals("residual")){
+								entry1 = lexEntries.asObject().get("entries").asArray().get(0).asObject();
+								break;
+							}
+						}
+					}
+					if(entry1==null)return;
+					JsonArray examples = entry1.get("senses").asArray();
+					JsonValue temp = null;
+					JsonArray out = null;
+					for(JsonValue jv : examples){
+						temp = jv.asObject().get("examples");
+						if(temp!=null){
+							out = temp.asArray();
+							if(out!=null){
+								String str = out.get(0).asObject().get("text").asString().replaceAll("[^\\sa-zA-Z0-9']", " ");
+								main.sayWord(1.3, voiceType, str);
+								System.out.println(str);
+							}
+						}
+					}
+					
+				} catch (InterruptedException ie){logger.error(ie.getMessage());}catch(ExecutionException e) {
+					logger.error(e.getLocalizedMessage());
+				}
+			}
+		};
+		new Thread(getreq).start();
+	}
 	
 }

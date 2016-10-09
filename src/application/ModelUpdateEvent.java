@@ -84,6 +84,9 @@ public class ModelUpdateEvent {
 				_game.startGame();
 			}
 			break;
+		case "getAndSayDefinition":
+			if(_game!=null && !_game.isGameEnded()) _game.getAndSayExample();
+			break;
 		case "nextLevel":
 			boolean review = _game.isReview();
 			_game = new Game(_main, _statsModel, _game.level()+1);
@@ -106,7 +109,7 @@ public class ModelUpdateEvent {
 			try {
 				Method method = _class.getMethod("getTextAreaInput");
 				String word = (String) method.invoke(_sc);
-				_game.submitWord(word);
+				if(_game!=null && !_game.isGameEnded())_game.submitWord(word);
 			} catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
 				logger.error(e.getMessage());
 			}
@@ -215,7 +218,18 @@ public class ModelUpdateEvent {
 		default:
 		}
 	}
-	
+	/**
+	 * Should be called if class is an update from a level controller
+	 * This must be called by the main application, and will not be called automatically
+	 */
+	public void updateFromMainMenuController() {
+		switch(_message){
+		case "getMutedPreference":
+			_sc.onModelChange("settingsReady", _statsModel);
+			break;
+		default:
+		}
+	}
 	/**
 	 * Sets the game to the MainController's game
 	 * @param game Game
@@ -238,6 +252,7 @@ public class ModelUpdateEvent {
 		mue.setGame(_game);
 		_main.update(mue);
 	}
+	
 	
 }
 /**

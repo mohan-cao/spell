@@ -6,6 +6,8 @@ import java.util.concurrent.ExecutionException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import application.ModelUpdateEvent;
+import application.SettingsModel;
 import javafx.animation.FadeTransition;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
@@ -40,9 +42,11 @@ public class MainMenuController extends SceneController{
 	@FXML private Button rMistakesBtn;
 	@FXML private StackPane back;
 	@FXML private Label title;
+	private boolean isMuted;
 	private MediaPlayer media;
 	@Override
 	@FXML public void runOnce(){
+		isMuted=false;
 		try {
 			media = new MediaPlayer(new Media(getClass().getClassLoader().getResource("resources/Carpe Diem.mp3").toURI().toString()));
 			media.setAutoPlay(false);
@@ -55,7 +59,7 @@ public class MainMenuController extends SceneController{
 		Task<BackgroundImage> task = new Task<BackgroundImage>(){
 			@Override
 			protected BackgroundImage call() throws Exception {
-				Image img = new Image("https://unsplash.it/800/600/?random&blur&.jpg");
+				Image img = new Image("https://source.unsplash.com/category/nature/1920x1080");
 				BackgroundImage bgimg = new BackgroundImage(img, BackgroundRepeat.NO_REPEAT,BackgroundRepeat.NO_REPEAT, BackgroundPosition.CENTER, new BackgroundSize(BackgroundSize.AUTO, BackgroundSize.AUTO, false, false, false, true));
 				return bgimg;
 			}
@@ -113,10 +117,17 @@ public class MainMenuController extends SceneController{
 	}
 	@Override
 	public void init(String[] args) {
-		media.play();
+		application.update(new ModelUpdateEvent(this,"getMutedPreference"));
+		if(!isMuted)media.play();
 	}
 	@Override
-	public void onModelChange(String fieldName, Object...objects ) {}
+	public void onModelChange(String fieldName, Object...objects ) {
+		switch(fieldName){
+		case "settingsReady":
+			SettingsModel sm = (SettingsModel)objects[0];
+			isMuted = sm.isMuted();
+		}
+	}
 	@Override
 	public void cleanup() {}
 }

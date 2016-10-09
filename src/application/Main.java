@@ -32,6 +32,7 @@ import org.slf4j.LoggerFactory;
 
 import controller.IntroController;
 import controller.LevelController;
+import controller.MainMenuController;
 import controller.QuizController;
 import controller.SceneController;
 import controller.SettingsController;
@@ -50,6 +51,7 @@ import javafx.scene.control.Alert.AlertType;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
+import javafx.stage.Window;
 import javafx.stage.WindowEvent;
 import resources.UserStats;
 
@@ -383,11 +385,19 @@ public class Main extends Application implements MainInterface {
 			mue.updateFromIntroController();
 		} else if(mue.getControllerClass().equals(SettingsController.class)){
 			mue.updateFromSettingsController();
+		} else if(mue.getControllerClass().equals(MainMenuController.class)){
+			mue.updateFromMainMenuController();
 		}
+		
 	}
 
 	public static void main(String[] args) {
 		System.setProperty(org.slf4j.impl.SimpleLogger.DEFAULT_LOG_LEVEL_KEY, "DEBUG");
 		launch(args);
+	}
+
+	@Override
+	public Window getWindow() {
+		return _stage;
 	}
 }

@@ -3,6 +3,7 @@ import java.util.Collection;
 import java.util.List;
 
 import javafx.stage.Stage;
+import javafx.stage.Window;
 /**
  * Interface representing the main application model
  * @author Mohan Cao
@@ -65,5 +66,10 @@ public interface MainInterface {
 	 * @return list of strings
 	 */
 	public List<String> getVoices();
+	/**
+	 * Gets window in which the application is running from.
+	 * @return
+	 */
+	public Window getWindow();
 	
 }
