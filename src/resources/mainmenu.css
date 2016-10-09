@@ -1,35 +1,61 @@
 /* JavaFX CSS - Leave this comment until you have at least create one rule which uses -fx-Property */
 .blackbackground {
 	-fx-background-color:
-	linear-gradient(from 50% 0% to 50% 100%,rgba(50,50,50,0.1) 50%, rgba(0,0,0,0) 100%),
-	linear-gradient(from 50% 0% to 50% 100%, rgba(239, 243, 255, 0.1) 0%,rgba(239, 243, 255, 0.25) 17%, rgba(239, 243, 255, 0.25) 75%, transparent 75%),
-	linear-gradient(from 50% 0% to 50% 100%, transparent 0%, rgba(239, 243, 255, 0.5) 100%);
+	linear-gradient(from 50% 0% to 50% 100%,rgba(239, 243, 255, 0.3) 0%, rgba(0,0,0,0) 25%),
+	linear-gradient(from 50% 0% to 50% 100%, transparent 25%,rgba(239, 243, 255, 0.1) 40%, rgba(239, 243, 255, 0.25) 75%, transparent 75%),
+	linear-gradient(from 50% 0% to 50% 100%, transparent 25%,transparent 40%, rgba(150, 180, 255, 0.1) 75%, transparent 75%),
+	linear-gradient(from 50% 0% to 50% 100%, transparent 75%, rgba(239, 243, 255, 0.3) 100%);
 }
 .blackbackground2 {
-	-fx-background-color:rgba(150,150,150,0.3);
+	-fx-background-color:rgba(150,150,150,0.1);
+}
+.fadeFromBottom {
+	-fx-background-color:linear-gradient(from 50% 0% to 50% 100%,transparent 10%, rgba(150, 180, 255, 0.6) 100%);
 }
 .bottomborder {
+	-fx-border-radius: 0 0 20 20;
+	-fx-background-radius: 0 0 20 20;
+	-fx-border-width: 0 1 1 1;
+	-fx-border-insets: 0 -2 0 -2;
 	-fx-border-color: #cfd3df;
-	-fx-border-width: 0 0 1 0;
 }
-.rightborder {
+.bordered {
 	-fx-border-color: rgba(255,255,255,0.3);
-	-fx-border-width: 1 1 0 0;
+	-fx-border-width: 1 1 1 1;
+}
+.curvedborder{
+	-fx-border-radius: 20;
+	-fx-background-radius: 20;
 }
 .blackbackgroundplain {
-	-fx-background-color:rgba(0,0,0,1), radial-gradient(focus-angle 0, focus-distance 0%, center 50% 50%, radius 100%, rgba(255,255,255,0.3) 25%, transparent);
+	-fx-background-color:rgba(2,5,12,1), radial-gradient(focus-angle 0, focus-distance 0%, center 50% 50%, radius 100%, rgba(255,255,255,0.3) 25%, transparent);
+}
+.topbtn {
+	-fx-border-color: rgba(100,110,170,1);
+	-fx-border-radius: 20 20 0 0;
+    -fx-background-radius: 20 20 0 0;
+    -fx-border-width: 1;
+}
+.middlebtns {
+	-fx-border-color: rgba(100,110,170,1);
+	-fx-border-radius: 0;
+    -fx-background-radius: 0;
+    -fx-border-width: 1;
+}
+.bottombtn{
+	-fx-border-color: rgba(100,110,170,1);
+	-fx-border-radius: 0 0 20 20;
+    -fx-background-radius: 0 0 20 20;
+    -fx-border-width: 1;
 }
 .button {
-	-fx-border-color: rgba(100,110,170,1);
-	-fx-focus-color: transparent;
+	-fx-body-color: rgba(239, 243, 255, 0.8);
+	-fx-focus-color: -fx-body-color;
     -fx-faint-focus-color: transparent;
-	-fx-border-width: 1px;
-    -fx-inner-border: transparent;
-    -fx-body-color: rgba(239, 243, 255, 0.8);
- 
+    -fx-inner-border: -fx-body-color;
+    -fx-border-insets: 0;
     -fx-background-color: -fx-faint-focus-color, -fx-focus-color, -fx-inner-border, -fx-body-color; 
-    -fx-border-radius: 20px;
-    -fx-background-radius: 20px;
+    
 }
 .button:hover {
 	-fx-body-color:rgba(220, 239, 255, 0.8);

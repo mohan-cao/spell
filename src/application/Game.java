@@ -254,6 +254,15 @@ public class Game {
         }
 	}
 	/**
+	 * Controller interacts with this method to check and redeliver status.
+	 * A means of synchronizing controller and model resources.
+	 */
+	public void tick(){
+		
+	}
+	
+	
+	/**
 	 * Check word against game logic
 	 * @param word
 	 * @author Mohan Cao
@@ -285,7 +294,7 @@ public class Game {
 				main.tell("faultedWord",testWord);
 				speed = SAY_SPEED_SLOW;
 				main.sayWord(speed,voiceType, testWord);
-				main.sayWord(speed,voiceType, "The word is");
+				main.sayWord(SAY_SPEED_DEFAULT,voiceType, "The word is");
 			}else if(!faulted&&prevFaulted){
 				//correct after faulted => store faulted
 				main.tell("masteredWord",testWord);
@@ -297,7 +306,7 @@ public class Game {
 				main.tell("lastChanceWord",testWord);
 				speed = SAY_SPEED_VERYSLOW;
 				main.sayWord(speed,voiceType, testWord);
-				main.sayWord(speed,voiceType, "The word is");
+				main.sayWord(SAY_SPEED_DEFAULT,voiceType, "The word is");
 			}else{
 				//faulted twice => failed
 				main.tell("failedWord",testWord);
@@ -383,7 +392,8 @@ public class Game {
 							if(out!=null){
 								String str = out.get(0).asObject().get("text").asString().replaceAll("[^\\sa-zA-Z0-9']", " ");
 								main.sayWord(1.3, voiceType, str);
-								System.out.println(str);
+								logger.debug("Word was: "+str);
+								break;
 							}
 						}
 					}

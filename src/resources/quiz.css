@@ -3,7 +3,7 @@
 	-fx-background-color:#bbcef0;
 }
 .darkbluebackground {
-	-fx-background-color:linear-gradient(from 50% 0% to 50% 100%, #99aed0 75%, transparent 100%);
+	-fx-background-color:#99aed0;
 }
 .darkcenterstage{
 	-fx-background-color:radial-gradient(focus-angle 0, focus-distance 0%, center 50% 50%, radius 50%, white 25%, transparent);

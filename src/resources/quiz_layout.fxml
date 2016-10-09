@@ -5,6 +5,8 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ProgressBar?>
 <?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.ToolBar?>
+<?import javafx.scene.effect.DropShadow?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
@@ -20,34 +22,21 @@
 <StackPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="800.0" styleClass="bluebackground" stylesheets="@../resources/quiz.css" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.QuizController">
    <children>
       <BorderPane prefHeight="200.0" prefWidth="200.0">
-         <top>
-            <AnchorPane prefWidth="800.0" styleClass="darkbluebackground" BorderPane.alignment="CENTER">
-               <children>
-                  <Button layoutX="728.0" layoutY="12.0" mnemonicParsing="false" onMouseClicked="#quitToMainMenu" text="Quit to main menu" AnchorPane.bottomAnchor="15.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="5.0">
-                     <graphic>
-                        <ImageView fitHeight="10.0" fitWidth="15.0" pickOnBounds="true" preserveRatio="true" translateY="-1.0">
-                           <image>
-                              <Image url="@../resources/left-arrow-angle.png" />
-                           </image>
-                        </ImageView>
-                     </graphic></Button>
-               </children>
-            </AnchorPane>
-         </top>
          <center>
             <GridPane styleClass="darkcenterstage" BorderPane.alignment="CENTER">
                <columnConstraints>
                   <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
                </columnConstraints>
                <rowConstraints>
-                  <RowConstraints vgrow="SOMETIMES" />
-                  <RowConstraints vgrow="SOMETIMES" />
+                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                  <RowConstraints vgrow="ALWAYS" />
+                  <RowConstraints vgrow="ALWAYS" />
                   <RowConstraints vgrow="SOMETIMES" />
                </rowConstraints>
                <children>
-                  <AnchorPane>
+                  <AnchorPane GridPane.rowIndex="1">
                      <children>
-                        <Label fx:id="outputLabel" alignment="CENTER" contentDisplay="CENTER" textAlignment="CENTER" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                        <Label fx:id="outputLabel" alignment="CENTER" contentDisplay="CENTER" text="VoxSpell" textAlignment="CENTER" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                            <font>
                               <Font size="96.0" />
                            </font>
@@ -60,9 +49,9 @@
                         <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
                      </padding>
                   </AnchorPane>
-                  <VBox alignment="CENTER" GridPane.rowIndex="1">
+                  <VBox alignment="CENTER" GridPane.rowIndex="2">
                      <children>
-                        <Label fx:id="correctWordLabel" alignment="CENTER" contentDisplay="CENTER" textAlignment="CENTER">
+                        <Label fx:id="correctWordLabel" alignment="CENTER" contentDisplay="CENTER" text="Quiz Menu" textAlignment="CENTER">
                            <font>
                               <Font size="18.0" />
                            </font>
@@ -74,13 +63,16 @@
                         </Label>
                      </children>
                   </VBox>
-                  <FlowPane fx:id="buttonPanel" alignment="CENTER" columnHalignment="CENTER" hgap="5.0" vgap="5.0" visible="false" GridPane.rowIndex="2">
+                  <FlowPane fx:id="buttonPanel" alignment="CENTER" columnHalignment="CENTER" hgap="5.0" vgap="5.0" visible="false" GridPane.rowIndex="3">
                      <children>
                         <Button mnemonicParsing="false" onMouseClicked="#btnNextLevel" text="Next Level" />
                      </children>
                      <padding>
                         <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                      </padding>
+                     <GridPane.margin>
+                        <Insets bottom="20.0" />
+                     </GridPane.margin>
                   </FlowPane>
                </children>
             </GridPane>
@@ -151,6 +143,30 @@
                </children>
             </AnchorPane>
          </bottom>
+         <top>
+            <ToolBar styleClass="darkbluebackground" BorderPane.alignment="CENTER">
+               <items>
+                  <Button mnemonicParsing="false" onMouseClicked="#quitToMainMenu" text="Quit to main menu">
+                     <graphic>
+                        <ImageView fitHeight="10.0" fitWidth="15.0" pickOnBounds="true" preserveRatio="true" translateY="-1.0">
+                           <image>
+                              <Image url="@../resources/left-arrow-angle.png" />
+                           </image>
+                        </ImageView>
+                     </graphic>
+                  </Button>
+               </items>
+               <BorderPane.margin>
+                  <Insets />
+               </BorderPane.margin>
+               <padding>
+                  <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+               </padding>
+               <effect>
+                  <DropShadow color="#1b2c54" height="102.96" radius="30.49" />
+               </effect>
+            </ToolBar>
+         </top>
       </BorderPane>
    </children>
 </StackPane>
