@@ -21,6 +21,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Queue;
 import java.util.Scanner;
 import java.util.concurrent.BlockingQueue;
@@ -48,6 +49,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.ButtonType;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
@@ -292,7 +294,10 @@ public class Main extends Application implements MainInterface {
 				if (output == null || output.isEmpty()) {
 					Alert alert = new Alert(AlertType.ERROR);
 					alert.setContentText("Could not find Festival text-to-speech\nsynthesiser. Sorry about that.");
-					alert.showAndWait();
+					Optional<ButtonType> option = alert.showAndWait();
+					if(option.get() == ButtonType.OK){
+						Platform.exit();
+					}
 				}else{
 					_pb = new ProcessBuilder(output).start();
 					bw = new BufferedWriter(new PrintWriter(_pb.getOutputStream()));
