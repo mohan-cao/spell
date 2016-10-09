@@ -66,6 +66,7 @@ public class Game {
 	private String voiceType;
 	private long highscore;
 	private int streak;
+	private int wordsInList;
 	
 	public Game(MainInterface app, SettingsModel statsModel){
 		this(app,statsModel,1);
@@ -189,7 +190,7 @@ public class Game {
 		_correct=0;
 		_incorrect=0;
 		gameEnded=false;
-		main.tell("gameStartConfigure", _level);
+		
 		review=false; //assume not reviewing words
 		if(practice){
 			HashSet<String> set = new HashSet<String>();
@@ -217,6 +218,14 @@ public class Game {
 				gameEnded=true;
 			}
 		}
+		wordsInList = wordList.size();
+		//calculate max score
+		long maxscore = 0;
+		for(int i=1;i<=wordsInList;i++){
+			maxscore += 1000+((i-2>0)?i-2:0)*500;
+		}
+		logger.debug("max score is "+maxscore+" actual score was: "+highscore);
+		main.tell("gameStartConfigure", _level, stats.getHighScore(_level), maxscore);
 		if(!wordList.isEmpty()){
 				wordList = wordList.subList(0, (wordList.size()>=WORDS_NUM)?WORDS_NUM:wordList.size());
 				main.sayWord(SAY_SPEED_INTRO,voiceType,"Please spell the spoken words.");
@@ -304,12 +313,14 @@ public class Game {
 				main.sayWord(SAY_SPEED_DEFAULT,voiceType, "The word is");
 			}else if(!faulted&&prevFaulted){
 				//correct after faulted => store faulted
+				highscore+=200;
 				main.tell("masteredWord",testWord,highscore);
 				stats.getSessionStats().addStat(Type.FAULTED,testWord, 1, _level);
 				_incorrect++;
 				wordList.remove(0);
 			}else if(review&&!prev2Faulted){
 				//give one more chance in review, set speed to very slow
+				highscore+=100;
 				main.tell("lastChanceWord",testWord,highscore);
 				speed = SAY_SPEED_VERYSLOW;
 				main.sayWord(speed,voiceType, testWord);
@@ -326,21 +337,27 @@ public class Game {
 			if(wordList.size()!=0){
 				main.sayWord(speed,voiceType, wordList.get(0));
 			}else{
+				//calculate max score
+				long maxscore = 0;
+				for(int i=1;i<=wordsInList;i++){
+					maxscore += 1000+((i-2>0)?i-2:0)*500;
+				}
+				logger.debug("max score is "+maxscore+" actual score was: "+highscore);
 				//end game
 				stats.updateHighScore(_level, highscore);
-				highscore = 0;
-				streak =0;
 				if(prevFaulted||faulted||prev2Faulted){
-					main.tell("resetGame",_correct,(_correct+_incorrect),testWord,highscore);
+					main.tell("resetGame",highscore,testWord);
 				}else{
-					main.tell("resetGame",_correct,(_correct+_incorrect),highscore);
+					main.tell("resetGame",highscore);
 				}
 				
-				if(!review&&(_correct/(double)(_incorrect+_correct))>=0.9){
+				if(!review&&(highscore/(double)maxscore>=0.48||_correct/((double)_incorrect+_correct)>=0.9)){
 					stats.getSessionStats().unlockLevel(_level+1);
 					main.tell("showRewards");
 				}
 				gameEnded=true;
+				highscore = 0;
+				streak =0;
 			}
 			//set progressbars for progress through quiz and also denote additional separation for faulted words
 			main.tell("setProgress",(wordListSize-wordList.size()+((faulted)?0.5:0))/(double)wordListSize);

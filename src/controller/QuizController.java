@@ -19,12 +19,22 @@ import com.eclipsesource.json.JsonObject;
 import com.eclipsesource.json.JsonValue;
 
 import application.ModelUpdateEvent;
+import javafx.beans.InvalidationListener;
+import javafx.beans.binding.Bindings;
+import javafx.beans.binding.StringBinding;
+import javafx.beans.property.LongProperty;
+import javafx.beans.property.SimpleLongProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableDoubleValue;
+import javafx.beans.value.ObservableStringValue;
+import javafx.beans.value.ObservableValue;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
 import javafx.scene.control.Tooltip;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
@@ -50,14 +60,25 @@ public class QuizController extends SceneController{
 	@FXML private Button repeatBtn;
 	@FXML private ProgressBar progress;
 	@FXML private FlowPane buttonPanel;
+	@FXML private TextField csText;
+	@FXML private TextField pbText;
+	@FXML private TextField msText;
+	private LongProperty personalBest;
+	private LongProperty maximum;
+	private LongProperty currentscore;
 	
 	@Override
 	@FXML public void runOnce(){
+		personalBest = new SimpleLongProperty();
+		maximum = new SimpleLongProperty();
+		currentscore = new SimpleLongProperty();
 		Tooltip tts = new Tooltip("Change TTS voice");
 		Tooltip repeat = new Tooltip("Say the word again");
 		Tooltip.install(voiceBtn,tts);
 		Tooltip.install(repeatBtn, repeat);
-		
+		csText.textProperty().bind(Bindings.format("%d", currentscore));
+		pbText.textProperty().bind(Bindings.format("%d", personalBest));
+		msText.textProperty().bind(Bindings.format("%d", maximum));
 	}
 	
 	public MediaPlayer getAudioFromResources(String resource){
@@ -214,6 +235,7 @@ b	 * Gets text area input
 	public void onModelChange(String signal, Object... objectParameters) {
 		switch(signal){
 		case "gameStartConfigure":
+			logger.debug("gameStart model update");
 			confirm.setDisable(false);
 			buttonPanel.setVisible(false);
 			wordTextArea.setDisable(false);
@@ -224,52 +246,66 @@ b	 * Gets text area input
 			correctWordLabel.setText("Please spell the spoken words.\n"
 					+ "Feel free to replay the word anytime with the right side buttons.\n"
 					+ "You may also change the voice if you find it necessary.");
+			personalBest.set((long) objectParameters[1]);
+			maximum.set((long) objectParameters[2]);
+			currentscore.set(0);
 			break;
 		case "resetGame":
+			logger.debug("resetGame model update");
 			MediaPlayer media = getAudioFromResources("resources/victory announcer.mp3");
 			media.play();
 			outputLabel.setText("Well done!");
 			outputLabel.setTextFill(Paint.valueOf("black"));
-			if(objectParameters.length==3){
-				correctWordLabel.setText("You got "+objectParameters[0]+" out of "+objectParameters[1]+" words correct.");
-			}else if(objectParameters.length==4){
-				correctWordLabel.setText("You got "+objectParameters[0]+" out of "+objectParameters[1]+" words correct."
-					+ "\nThe last word was \""+objectParameters[2]+"\"");
+			currentscore.set((long) objectParameters[0]);
+			if(objectParameters.length==1){
+				correctWordLabel.setText("Points scored this round: "+objectParameters[0]);
+			}else if(objectParameters.length==2){
+				correctWordLabel.setText("Points scored this round: "+objectParameters[0]+"\nThe last word was \""+objectParameters[1]+"\"");
 			}
 			wordTextArea.setDisable(true);
 			confirm.setText("Restart?");
 			break;
 		case "masteredWord":
+			logger.debug("masteredWord model update");
 			outputLabel.setText("Well done");
 			outputLabel.setTextFill(Paint.valueOf("#44a044"));
 			correctWordLabel.setText("Correct, the word is \""+objectParameters[0]+"\"");
 			progress.setStyle("-fx-accent: lightgreen;");
+			currentscore.set((long)objectParameters[1]);
 			break;
 		case "faultedWord":
+			logger.debug("faultedWord model update");
 			outputLabel.setText("Try again!");
 			outputLabel.setTextFill(Paint.valueOf("#cf8f14"));
 			correctWordLabel.setText("Sorry, that wasn't quite right");
 			progress.setStyle("-fx-accent: #ffbf44;");
+			currentscore.set((long)objectParameters[1]);
 			break;
 		case "lastChanceWord":
+			logger.debug("lastChanceWord model update");
 			outputLabel.setText("Last try!");
 			outputLabel.setTextFill(Paint.valueOf("#cf8f14"));
 			correctWordLabel.setText("Let's slow it down...");
 			progress.setStyle("-fx-accent: #ffbf44;");
+			currentscore.set((long)objectParameters[1]);
 			break;
 		case "failedWord":
+			logger.debug("failedWord model update");
 			outputLabel.setText("Incorrect");
 			outputLabel.setTextFill(Paint.valueOf("orangered"));
 			correctWordLabel.setText("The word was \""+objectParameters[0]+"\"");
 			progress.setStyle("-fx-accent: orangered;");
+			currentscore.set((long)objectParameters[1]);
 			break;
 		case "setProgress":
 			progress.setProgress(Double.class.cast(objectParameters[0]));
 			break;
 		case "showRewards":
+			logger.debug("showRewards model update");
 			buttonPanel.setVisible(true);
 			break;
 		case "gameWin":
+			logger.debug("winner model update");
 			outputLabel.setText("You win!");
 			outputLabel.setTextFill(Paint.valueOf("#44a044"));
 			correctWordLabel.setText("You have achieved mastery in all levels.\nWell done.");
