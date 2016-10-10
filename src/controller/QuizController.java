@@ -305,6 +305,7 @@ b	 * Gets text area input
 			buttonPanel.setVisible(true);
 			break;
 		case "gameWin":
+			buttonPanel.setVisible(false);
 			logger.debug("winner model update");
 			outputLabel.setText("You win!");
 			outputLabel.setTextFill(Paint.valueOf("#44a044"));

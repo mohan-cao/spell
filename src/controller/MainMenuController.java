@@ -41,7 +41,6 @@ public class MainMenuController extends SceneController{
 	@FXML private Button cStatsBtn;
 	@FXML private Button rMistakesBtn;
 	@FXML private StackPane back;
-	@FXML private Label title;
 	private boolean isMuted;
 	private MediaPlayer media;
 	@Override
@@ -54,8 +53,6 @@ public class MainMenuController extends SceneController{
 		} catch (URISyntaxException e) {
 			logger.error("media isnt work sorry");
 		}
-		DropShadow ds = new DropShadow(BlurType.GAUSSIAN, Color.BLACK, 15,0.3, 0, 10);
-		title.setEffect(ds);
 		Task<BackgroundImage> task = new Task<BackgroundImage>(){
 			@Override
 			protected BackgroundImage call() throws Exception {

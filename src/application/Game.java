@@ -66,7 +66,6 @@ public class Game {
 	private String voiceType;
 	private long highscore;
 	private int streak;
-	private int wordsInList;
 	
 	public Game(MainInterface app, SettingsModel statsModel){
 		this(app,statsModel,1);
@@ -216,24 +215,25 @@ public class Game {
 			if(wordList.size()==0){
 				main.tell("gameWin");
 				gameEnded=true;
+				return;
 			}
 		}
-		wordsInList = wordList.size();
-		//calculate max score
-		long maxscore = 0;
-		for(int i=1;i<=wordsInList;i++){
-			maxscore += 1000+((i-2>0)?i-2:0)*500;
-		}
-		logger.debug("max score is "+maxscore+" actual score was: "+highscore);
-		main.tell("gameStartConfigure", _level, stats.getHighScore(_level), maxscore);
 		if(!wordList.isEmpty()){
 				wordList = wordList.subList(0, (wordList.size()>=WORDS_NUM)?WORDS_NUM:wordList.size());
 				main.sayWord(SAY_SPEED_INTRO,voiceType,"Please spell the spoken words.");
 				main.sayWord(SAY_SPEED_DEFAULT,voiceType,wordList.get(0));
 		}
-		//set faulted=false for first word
-		main.tell("setProgress",0d);
+		//calculate max score
+		long maxscore = 0;
 		wordListSize=(wordList.size()!=0)?wordList.size():1;
+		for(int i=1;i<=wordListSize;i++){
+			maxscore += 1000+((i-2>0)?i-2:0)*500;
+		}
+		logger.debug("max score is "+maxscore+" actual score was: "+highscore);
+		
+		//set faulted=false for first word
+		main.tell("gameStartConfigure", _level, stats.getHighScore(_level), maxscore);
+		main.tell("setProgress",0d);
 		faulted=false;
 	}
 	
@@ -339,7 +339,7 @@ public class Game {
 			}else{
 				//calculate max score
 				long maxscore = 0;
-				for(int i=1;i<=wordsInList;i++){
+				for(int i=1;i<=wordListSize;i++){
 					maxscore += 1000+((i-2>0)?i-2:0)*500;
 				}
 				logger.debug("max score is "+maxscore+" actual score was: "+highscore);
