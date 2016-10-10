@@ -397,7 +397,6 @@ public class Main extends Application implements MainInterface {
 	}
 
 	public static void main(String[] args) {
-		System.setProperty(org.slf4j.impl.SimpleLogger.DEFAULT_LOG_LEVEL_KEY, "DEBUG");
 		launch(args);
 	}
 
