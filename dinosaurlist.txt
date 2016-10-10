@@ -1,0 +1,25 @@
+%level 1
+extinct
+fossil
+%Level 1
+bones
+teeth
+rocks
+sharp
+scary
+claw
+egg
+nest
+beak
+spikes
+fly
+horns
+hunting
+lizard
+%Level 2
+predator
+footprint
+herbivore
+carnivore
+volcano
+reptile

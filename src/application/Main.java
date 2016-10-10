@@ -178,7 +178,7 @@ public class Main extends Application implements MainInterface {
 		BufferedReader br = null;
 		try {
 			br = new BufferedReader(
-					new InputStreamReader(this.getClass().getClassLoader().getResourceAsStream("config.cfg")));
+					new InputStreamReader(Main.class.getClassLoader().getResourceAsStream("config.cfg")));
 			String line;
 			String[] strSplit;
 			while ((line = br.readLine()) != null) {
