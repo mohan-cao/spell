@@ -106,10 +106,10 @@ public class LevelController extends SceneController {
 					levelStatsLbl.setText("Mastery (words mastered/total): "+masteredpercentage+"%");
 					currentHoveredButton = newBtn;
 				});
-				newBtn.setMinSize(50, 50);
+				newBtn.setMinSize(200, 200);
 				newBtn.setPrefHeight(Button.USE_COMPUTED_SIZE);
 				Text text = new Text(""+i);
-				text.setStyle("-fx-font-size: "+(16+Math.min((i/10)*2,20))+"px;");
+				text.setStyle("-fx-font-size: "+(60+Math.min((i/10)*2,20))+"px;");
 				newBtn.setGraphic(text);
 				tileContainer.getChildren().add(newBtn);
 			}

@@ -63,6 +63,7 @@ public class SettingsController extends SceneController {
 			setSelection(false,settings.wordListsPath(),"Change to different list...");
 			if(wordSelection.getSelectionModel().getSelectedItem()==null)wordSelection.getSelectionModel().select(0);
 			wordSelection.setEditable(false);
+			wordSelection.getSelectionModel().select(settings.getCurrentListKey());
 			festivalSelection.getItems().addAll(application.getVoices());
 			if(festivalSelection.getSelectionModel().getSelectedItem()==null)festivalSelection.getSelectionModel().select(0);
 			festivalSelection.setEditable(false);

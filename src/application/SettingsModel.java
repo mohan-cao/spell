@@ -189,6 +189,9 @@ public class SettingsModel {
 		logger.debug("got word list"+appStorage.getCurrentList());
 		return appStorage.getCurrentList();
 	}
+	public String getCurrentListKey(){
+		return appStorage.getCurrentListKey();
+	}
 	/**
 	 * Adds word to word list path for global stats
 	 * @param path

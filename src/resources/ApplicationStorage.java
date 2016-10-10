@@ -53,7 +53,14 @@ public class ApplicationStorage implements Serializable {
 	public File getCurrentList() {
 		return _spellingListPath.get(_currentListKey);
 	}
-
+	
+	/**
+	 * Get current list key for display
+	 */
+	public String getCurrentListKey(){
+		return _currentListKey;
+	}
+	
 	/**
 	 * Gets preferred voice.
 	 * @return

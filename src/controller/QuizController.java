@@ -53,7 +53,7 @@ public class QuizController extends SceneController{
 	final Logger logger = LoggerFactory.getLogger(this.getClass());
 	@FXML private Label outputLabel;
 	@FXML private Label correctWordLabel;
-	@FXML private Label definition;
+	@FXML private Button definition;
 	@FXML private TextArea wordTextArea;
 	@FXML private Button confirm;
 	@FXML private Button voiceBtn;
@@ -235,6 +235,7 @@ b	 * Gets text area input
 	public void onModelChange(String signal, Object... objectParameters) {
 		switch(signal){
 		case "gameStartConfigure":
+			definition.setVisible(true);
 			logger.debug("gameStart model update");
 			confirm.setDisable(false);
 			buttonPanel.setVisible(false);
@@ -251,6 +252,7 @@ b	 * Gets text area input
 			currentscore.set(0);
 			break;
 		case "resetGame":
+			definition.setVisible(false);
 			logger.debug("resetGame model update");
 			MediaPlayer media = getAudioFromResources("resources/victory announcer.mp3");
 			media.setVolume(0.2);
@@ -306,6 +308,10 @@ b	 * Gets text area input
 			buttonPanel.setVisible(true);
 			break;
 		case "gameWin":
+			definition.setVisible(false);
+			currentscore.set(0);
+			personalBest.set(0);
+			maximum.set(0);
 			buttonPanel.setVisible(false);
 			logger.debug("winner model update");
 			outputLabel.setText("You win!");

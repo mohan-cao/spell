@@ -222,6 +222,7 @@ public class Game {
 				wordList = wordList.subList(0, (wordList.size()>=WORDS_NUM)?WORDS_NUM:wordList.size());
 				main.sayWord(SAY_SPEED_INTRO,voiceType,"Please spell the spoken words.");
 				main.sayWord(SAY_SPEED_DEFAULT,voiceType,wordList.get(0));
+				logger.debug("Word:" +wordList.get(0));
 		}
 		//calculate max score
 		long maxscore = 0;
@@ -281,6 +282,7 @@ public class Game {
 	 * @author Mohan Cao
 	 */
 	public void submitWord(String word){
+		
 		if(!gameEnded){
 			int speed = SAY_SPEED_DEFAULT;
 			boolean prev2Faulted = prevFaulted;
@@ -334,8 +336,10 @@ public class Game {
 				wordList.remove(0);
 				_incorrect++;
 			}
+			
 			if(wordList.size()!=0){
 				main.sayWord(speed,voiceType, wordList.get(0));
+				logger.debug("Word:" +wordList.get(0));
 			}else{
 				//calculate max score
 				long maxscore = 0;
