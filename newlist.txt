@@ -1,11 +1,45 @@
+%level 1
+extinct
+fossil
 %Level 1
-how
-do
-i
-shoot
-myself
+bones
+teeth
+rocks
+sharp
+scary
+claw
+egg
+nest
+beak
+spikes
+fly
+horns
+hunting
+lizard
+hipped
 %Level 2
-lmao
-kill
-self
-please
+predator
+footprint
+herbivore
+carnivore
+volcano
+reptile
+%Level 3
+Stegosaurus
+Tyrannosaurus
+Pterasaur
+Velociraptor
+Triceratops
+Apatosaurus
+Diplodocus
+Brachiosaurus
+Jurassic Period
+Triassic Period
+Mesozoic Period
+Cretaceous Period
+
+
+bird hipped
+prehistoric
+Paleontologist
+terrible lizard

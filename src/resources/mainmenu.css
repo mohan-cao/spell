@@ -5,11 +5,11 @@
 	-fx-font-family: cursive;
 }
 .blackbackground {
-	-fx-background-color:
+	/*-fx-background-color:
 	linear-gradient(from 50% 0% to 50% 100%,rgba(239, 243, 255, 0.3) 0%, rgba(0,0,0,0) 25%),
 	linear-gradient(from 50% 0% to 50% 100%, transparent 25%,rgba(239, 243, 255, 0.1) 40%, rgba(239, 243, 255, 0.25) 75%, transparent 75%),
 	linear-gradient(from 50% 0% to 50% 100%, transparent 25%,transparent 40%, rgba(150, 180, 255, 0.1) 75%, transparent 75%),
-	linear-gradient(from 50% 0% to 50% 100%, transparent 75%, rgba(239, 243, 255, 0.3) 100%);
+	linear-gradient(from 50% 0% to 50% 100%, transparent 75%, rgba(239, 243, 255, 0.3) 100%);*/
 }
 .blackbackground2 {
 	-fx-background-color:rgba(150,150,150,0.1);
@@ -18,11 +18,11 @@
 	-fx-background-color:linear-gradient(from 50% 0% to 50% 100%,transparent 10%, rgba(150, 180, 255, 0.6) 100%);
 }
 .bottomborder {
-	-fx-border-radius: 0 0 20 20;
+	/*-fx-border-radius: 0 0 20 20;
 	-fx-background-radius: 0 0 20 20;
 	-fx-border-width: 0 1 1 1;
 	-fx-border-insets: 0 -2 0 -2;
-	-fx-border-color: #cfd3df;
+	-fx-border-color: #cfd3df;*/
 }
 .bordered {
 	-fx-border-color: rgba(255,255,255,0.3);

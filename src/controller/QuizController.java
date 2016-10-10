@@ -253,6 +253,7 @@ b	 * Gets text area input
 		case "resetGame":
 			logger.debug("resetGame model update");
 			MediaPlayer media = getAudioFromResources("resources/victory announcer.mp3");
+			media.setVolume(0.2);
 			media.play();
 			outputLabel.setText("Well done!");
 			outputLabel.setTextFill(Paint.valueOf("black"));
