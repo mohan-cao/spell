@@ -12,13 +12,9 @@ import javafx.animation.FadeTransition;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.effect.BlurType;
-import javafx.scene.effect.DropShadow;
 import javafx.scene.image.Image;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Background;
-import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.BackgroundImage;
 import javafx.scene.layout.BackgroundPosition;
 import javafx.scene.layout.BackgroundRepeat;
@@ -26,8 +22,6 @@ import javafx.scene.layout.BackgroundSize;
 import javafx.scene.layout.StackPane;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
-import javafx.scene.media.MediaPlayer.Status;
-import javafx.scene.paint.Color;
 import javafx.util.Duration;
 /**
  * A view-controller that is bound to the levels_layout fxml
@@ -58,6 +52,7 @@ public class MainMenuController extends SceneController{
 			protected BackgroundImage call() throws Exception {
 				Image img = new Image("https://source.unsplash.com/category/nature/1920x1080");
 				BackgroundImage bgimg = new BackgroundImage(img, BackgroundRepeat.NO_REPEAT,BackgroundRepeat.NO_REPEAT, BackgroundPosition.CENTER, new BackgroundSize(BackgroundSize.AUTO, BackgroundSize.AUTO, false, false, false, true));
+				logger.debug("");
 				return bgimg;
 			}
 			public void succeeded(){
@@ -91,6 +86,13 @@ public class MainMenuController extends SceneController{
 	@FXML public void newQuiz(MouseEvent e){
 		media.pause();
 		application.requestSceneChange("levelMenu");
+	}
+	/**
+	 * Opens up manual
+	 * @param e
+	 */
+	@FXML public void getHelp(MouseEvent e){
+		application.update(new ModelUpdateEvent(this, "getHelp"));
 	}
 	/**
 	 * Listener for Stats view navigation button

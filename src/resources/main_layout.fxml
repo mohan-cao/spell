@@ -101,6 +101,7 @@
                   <Insets bottom="30.0" />
                </padding>
             </GridPane>
+            <Button mnemonicParsing="false" onMouseClicked="#getHelp" text="?" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="5.0" />
          </children>
       </AnchorPane>
    </children>

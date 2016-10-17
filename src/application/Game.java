@@ -78,6 +78,7 @@ public class Game {
 		wordList = new LinkedList<String>();
 		voiceType = stats.preferredVoice();
 		voices = main.getVoices();
+		if(voices.get(0).equals(voiceType))voices.add(voices.remove(0));
 		_level = level;
 	}
 	
@@ -109,7 +110,7 @@ public class Game {
 		voiceType = voices.remove(0);
 		voices.add(voiceType);
 		
-		switch(voices.get(0)){
+		switch(voiceType){
 		case "kal_diphone":
 			main.sayWord(SAY_SPEED_DEFAULT, voiceType, "Using American English");
 			break;
@@ -272,7 +273,7 @@ public class Game {
 	 * A means of synchronizing controller and model resources.
 	 */
 	public void tick(){
-		
+		//currently unused
 	}
 	
 	

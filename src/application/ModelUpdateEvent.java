@@ -1,7 +1,12 @@
 package application;
 
+import java.awt.Desktop;
+import java.io.File;
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashSet;
@@ -14,8 +19,15 @@ import org.slf4j.LoggerFactory;
 import controller.IntroController;
 import controller.LevelController;
 import controller.SceneController;
+import javafx.application.HostServices;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.Alert.AlertType;
+import javafx.scene.web.WebView;
+import javafx.stage.Stage;
 import resources.UserStats;
 import resources.UserStats.Type;
 /**
@@ -219,6 +231,22 @@ public class ModelUpdateEvent {
 		switch(_message){
 		case "getMutedPreference":
 			_sc.onModelChange("settingsReady", _statsModel);
+			break;
+		case "getHelp":
+			logger.debug("triggered getHelp");
+			try {
+				URI uri = this.getClass().getClassLoader().getResource("README.html").toURI();
+				WebView web = new WebView();
+				web.getEngine().load(uri.toString());
+				Stage alert = new Stage();
+				alert.setOnCloseRequest(e->{
+				});
+				alert.setScene(new Scene(web));
+				alert.setResizable(true);
+				alert.showAndWait();
+			} catch (URISyntaxException e) {
+				logger.debug(e.getMessage());
+			}
 			break;
 		default:
 		}

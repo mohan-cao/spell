@@ -62,6 +62,7 @@ public class LevelController extends SceneController {
 			logger.error("media isnt work sorry");
 		}
 		lastButtonClicked=null;currentHoveredButton=null;
+		tileContainer.getParent().layout();
 	}
 	/**
 	 * Quit to main menu button
@@ -116,6 +117,7 @@ public class LevelController extends SceneController {
 				newBtn.setStyle("-fx-background-radius:100px;");
 				tileContainer.getChildren().add(newBtn);
 			}
+			application.layout();
 			break;
 		case "settingsReady":
 			SettingsModel sm = (SettingsModel)objects[0];

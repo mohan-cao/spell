@@ -2,6 +2,7 @@ package application;
 import java.util.Collection;
 import java.util.List;
 
+import javafx.application.HostServices;
 import javafx.stage.Stage;
 import javafx.stage.Window;
 /**
@@ -9,7 +10,7 @@ import javafx.stage.Window;
  * @author Mohan Cao
  *
  */
-public interface MainInterface {
+public interface MainInterface{
 	/**
 	 * Request a scene change in the application.
 	 * @param key
@@ -71,5 +72,11 @@ public interface MainInterface {
 	 * @return
 	 */
 	public Window getWindow();
+	/**
+	 * Relayout of stage. Can be called anywhere.
+	 */
+	public void layout();
+	
+	public HostServices getHostServices();
 	
 }

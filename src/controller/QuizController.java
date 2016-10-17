@@ -1,9 +1,9 @@
 package controller;
 
 import java.io.BufferedReader;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.concurrent.ExecutionException;
@@ -14,38 +14,41 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.eclipsesource.json.Json;
-import com.eclipsesource.json.JsonArray;
-import com.eclipsesource.json.JsonObject;
 import com.eclipsesource.json.JsonValue;
+import com.mashape.unirest.http.HttpResponse;
+import com.mashape.unirest.http.JsonNode;
+import com.mashape.unirest.http.Unirest;
+import com.mashape.unirest.http.exceptions.UnirestException;
 
 import application.ModelUpdateEvent;
-import javafx.animation.FadeTransition;
-import javafx.beans.InvalidationListener;
 import javafx.beans.binding.Bindings;
-import javafx.beans.binding.StringBinding;
 import javafx.beans.property.LongProperty;
 import javafx.beans.property.SimpleLongProperty;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableDoubleValue;
-import javafx.beans.value.ObservableStringValue;
-import javafx.beans.value.ObservableValue;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
+import javafx.scene.Node;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Tooltip;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.StackPane;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.paint.Paint;
-import javafx.util.Duration;
+import javafx.scene.web.WebView;
+import javafx.stage.Stage;
 
 /**
  * A view-controller that is bound to the quiz_layout fxml
@@ -56,7 +59,7 @@ public class QuizController extends SceneController{
 	final Logger logger = LoggerFactory.getLogger(this.getClass());
 	@FXML private Label outputLabel;
 	@FXML private Label correctWordLabel;
-	@FXML private Button definition;
+	@FXML private Hyperlink definition;
 	@FXML private TextArea wordTextArea;
 	@FXML private Button confirm;
 	@FXML private Button voiceBtn;
@@ -67,12 +70,18 @@ public class QuizController extends SceneController{
 	@FXML private TextField pbText;
 	@FXML private TextField msText;
 	@FXML private HBox highscorebox;
+	private MediaPlayer dingSound;
+	private MediaPlayer tadaSound;
 	private LongProperty personalBest;
 	private LongProperty maximum;
 	private LongProperty currentscore;
 	
 	@Override
 	@FXML public void runOnce(){
+		dingSound = getAudioFromResources("resources/159158__daenn__din-ding.wav");
+		dingSound.setVolume(0.2);
+		tadaSound = getAudioFromResources("resources/tada.mp3");
+		tadaSound.setVolume(0.2);
 		personalBest = new SimpleLongProperty();
 		maximum = new SimpleLongProperty();
 		currentscore = new SimpleLongProperty();
@@ -166,18 +175,69 @@ public class QuizController extends SceneController{
 	public void getDefinition(MouseEvent me){
 		application.update(new ModelUpdateEvent(this,"getAndSayDefinition"));
 	}
-	/**
-	 * Prints a title on the screen for specified time
-	 * @param word
-	 * @param milliseconds
-	 */
-	private void printTimedTitle(String word, Label l, int milliseconds){
-		l.setText(word);
-		FadeTransition fade = new FadeTransition(Duration.millis(1000),l);
-		fade.setFromValue(1);
-		fade.setToValue(0);
-		fade.playFromStart();
-		
+	@FXML
+	public void getReward(MouseEvent me){
+		new Thread(getTask()).start();
+	}
+	private Task<String> getTask(){
+		Task<String> task = new Task<String>(){
+			private static final String app_key = "LZL1KpawCCmshcqvMV8hvS2rNDcjp1B1KLxjsnLiNr1vQih8jm";
+	        private static final String accept = "application/json";
+	        private String getFromURL(final URL url) throws Exception{
+	            HttpsURLConnection urlConnection2 = (HttpsURLConnection) url.openConnection();
+	            urlConnection2.setRequestProperty("X-Mashape-Key",app_key);
+	            urlConnection2.setRequestProperty("Accept",accept);
+	            // read the output from the server
+	            BufferedReader reader2 = null;
+	            reader2 = new BufferedReader(new InputStreamReader(urlConnection2.getInputStream()));
+	            StringBuffer stringBuilder2 = new StringBuffer();
+	            String line2 = null;
+	            while ((line2 = reader2.readLine()) != null) {
+	                stringBuilder2.append(line2 + "\n");
+	            }
+	            return stringBuilder2.toString();
+	        }
+			@Override
+			protected String call() throws Exception {
+				try {
+					String str = getFromURL(new URL("https://nijikokun-random-cats.p.mashape.com/random"));
+					JsonValue json = Json.parse(str);
+					if(!json.asObject().get("type").asString().contains("image"))return null;
+					logger.debug(json.toString());
+					return json.asObject().get("source").asString();
+				} catch (NullPointerException | UnirestException | IOException e1) {
+					logger.error(e1.getLocalizedMessage());
+				}
+			return null;
+			}
+			
+			public void succeeded(){
+				String randomkitten = null;
+				try {
+					randomkitten = get();
+				} catch (InterruptedException | ExecutionException e1) {logger.error(e1.getMessage());
+				}
+				Parent r = null;
+				if(randomkitten==null){
+					WebView web = new WebView();
+					web.getEngine().load("http://giphy.com/search/random-gif");
+					r = web;
+				}else{
+					Image img =new Image(randomkitten);
+					ImageView imgv = new ImageView(img);
+					r = new StackPane(imgv);
+				}
+				
+				Stage alert = new Stage();
+				alert.setOnCloseRequest(e->{
+				});
+				if(r!=null)alert.setScene(new Scene(r));
+				alert.setResizable(true);
+				alert.show();
+				
+			}
+		};
+		return task;
 	}
 	/**
 	 * Validates input before sending it to the marking algorithm
@@ -274,9 +334,8 @@ b	 * Gets text area input
 			String outputString = "";
 			definition.setVisible(false);
 			logger.debug("resetGame model update");
-			MediaPlayer media = getAudioFromResources("resources/victory announcer.mp3");
-			media.setVolume(0.2);
-			media.play();
+			tadaSound.stop();
+			tadaSound.play();
 			if(currentscore.get()>personalBest.get()) {outputString = "You beat your personal best! Congratulations!\n"; personalBest.set(currentscore.get());}
 			outputLabel.setText("Well done!");
 			outputLabel.setTextFill(Paint.valueOf("black"));
@@ -291,7 +350,8 @@ b	 * Gets text area input
 			break;
 		case "masteredWord":
 			logger.debug("masteredWord model update");
-			printTimedTitle("Well done!",outputLabel,1000);
+			dingSound.stop();dingSound.play();
+			outputLabel.setText("Well done!");
 			outputLabel.setTextFill(Paint.valueOf("#44a044"));
 			correctWordLabel.setText("Correct, the word is \""+objectParameters[0]+"\"");
 			progress.setStyle("-fx-accent: lightgreen;");
@@ -299,25 +359,25 @@ b	 * Gets text area input
 			break;
 		case "faultedWord":
 			logger.debug("faultedWord model update");
-			printTimedTitle("Try again!",outputLabel,1000);
+			outputLabel.setText("Try again!");
 			outputLabel.setTextFill(Paint.valueOf("#cf8f14"));
-			printTimedTitle("Sorry, that wasn't quite right", correctWordLabel, 1000);
+			correctWordLabel.setText("Sorry, that wasn't quite right");
 			progress.setStyle("-fx-accent: #ffbf44;");
 			currentscore.set((long)objectParameters[1]);
 			break;
 		case "lastChanceWord":
 			logger.debug("lastChanceWord model update");
-			printTimedTitle("Last try!",outputLabel,2000);
+			outputLabel.setText("Last try!");
 			outputLabel.setTextFill(Paint.valueOf("#cf8f14"));
-			printTimedTitle("Let's slow it down...",correctWordLabel,2000);
+			correctWordLabel.setText("Let's slow it down...");
 			progress.setStyle("-fx-accent: #ffbf44;");
 			currentscore.set((long)objectParameters[1]);
 			break;
 		case "failedWord":
 			logger.debug("failedWord model update");
-			printTimedTitle("Incorrect",outputLabel,1000);
+			outputLabel.setText("Incorrect");
 			outputLabel.setTextFill(Paint.valueOf("orangered"));
-			printTimedTitle("The word was \""+objectParameters[0]+"\"",correctWordLabel,1000);
+			correctWordLabel.setText("The word was \""+objectParameters[0]+"\"");
 			progress.setStyle("-fx-accent: orangered;");
 			currentscore.set((long)objectParameters[1]);
 			break;

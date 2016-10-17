@@ -13,20 +13,14 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.io.PrintWriter;
-import java.io.Reader;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Queue;
 import java.util.Scanner;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.LinkedBlockingQueue;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,18 +34,13 @@ import controller.SettingsController;
 import controller.StatsController;
 import javafx.application.Application;
 import javafx.application.Platform;
-import javafx.concurrent.Service;
-import javafx.concurrent.Task;
 import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
-import javafx.geometry.Orientation;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ButtonType;
-import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 import javafx.stage.Window;
 import javafx.stage.WindowEvent;
@@ -152,7 +141,7 @@ public class Main extends Application implements MainInterface {
 	 * @author Mohan Cao
 	 * @author Ryan MacMillan
 	 */
-	/*private void exportResource(String resource, String newFilePath) throws IOException {
+	private void exportResource(String resource, String newFilePath) throws IOException {
 		InputStream stream = null;
 		OutputStream resStreamOut = null;
 		try {
@@ -170,7 +159,7 @@ public class Main extends Application implements MainInterface {
 			if(stream!=null)stream.close();
 			if(resStreamOut!=null)resStreamOut.close();
 		}
-	}*/
+	}
 	/**
 	 * Builds scenes for the application
 	 */
@@ -230,7 +219,16 @@ public class Main extends Application implements MainInterface {
 		}
 		return success;
 	}
-
+	/**
+	 * Relayout of the stage. Can be called anywhere.
+	 */
+	public void layout(){
+		if(!_stage.isMaximized()&&!_stage.isFullScreen()){
+			_stage.setHeight(_stage.getScene().getRoot().prefHeight(-1));
+			_stage.setWidth(_stage.getScene().getRoot().prefWidth(-1));
+			_stage.centerOnScreen();
+		}
+	}
 	/**
 	 * Request scene change in particular stage with data parameters Does not
 	 * initialise the controller
@@ -339,7 +337,6 @@ public class Main extends Application implements MainInterface {
 				Process p = new ProcessBuilder("/bin/bash", "-c", "ls /usr/share/festival/voices/english").start();
 				p.waitFor();
 				Scanner scanner = new Scanner(p.getInputStream());
-				StringBuffer str = new StringBuffer();
 				while(scanner.hasNextLine()){
 					list.add(scanner.nextLine());
 				}
@@ -397,6 +394,7 @@ public class Main extends Application implements MainInterface {
 	}
 
 	public static void main(String[] args) {
+		System.setProperty(org.slf4j.impl.SimpleLogger.DEFAULT_LOG_LEVEL_KEY, "debug");
 		launch(args);
 	}
 
