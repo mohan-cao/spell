@@ -374,8 +374,8 @@ public class Game {
 	public void getAndSayExample(){
 		final String def = wordList.get(0);
 		Task<String> getreq = new Task<String>(){
-			private static final String app_id = "25890eb1";
-            private static final String app_key = "9f5c79bde4f7961c3e38d8f1c31e0a79";
+			private static final String app_id = "c2b79081";
+            private static final String app_key = "d6a5ddb61867b138d02b5e6f14612ab5";
             private String getFromURL(final URL url) throws Exception{
                 HttpsURLConnection urlConnection2 = (HttpsURLConnection) url.openConnection();
                 urlConnection2.setRequestProperty("Accept","application/json");
