@@ -153,24 +153,14 @@ public class ModelUpdateEvent {
 		LevelController lc = (LevelController) _sc;
 		switch(_message){
 		case "requestLevels":
-			ArrayList<Double> levelStats = new ArrayList<Double>();
+			ArrayList<Long> levelStats = new ArrayList<Long>();
 			Set<Integer> unlockedLevelSet = new LinkedHashSet<Integer>();
 			unlockedLevelSet.addAll(_statsModel.getGlobalStats().getUnlockedLevelSet());
 			unlockedLevelSet.addAll(_statsModel.getSessionStats().getUnlockedLevelSet());
 			ArrayList<Integer> unlockedLevels = new ArrayList<Integer>(unlockedLevelSet);
 			Collections.sort(unlockedLevels);
-			UserStats sStats = _statsModel.getGlobalStats();
-			UserStats gStats = _statsModel.getSessionStats();
-			int mastered = 0;
-			int failed = 0;
 			for(Integer i : unlockedLevels){
-				mastered = gStats.getTotalStatsOfLevel(i, UserStats.Type.MASTERED)+sStats.getTotalStatsOfLevel(i, UserStats.Type.MASTERED);
-				failed = gStats.getTotalStatsOfLevel(i, UserStats.Type.FAILED)+gStats.getTotalStatsOfLevel(i, UserStats.Type.FAULTED)+sStats.getTotalStatsOfLevel(i, UserStats.Type.FAILED)+sStats.getTotalStatsOfLevel(i, UserStats.Type.FAULTED);
-				if((mastered+failed)!=0){
-					levelStats.add(i,(mastered)/(double)(failed+mastered));
-				}else{
-					levelStats.add(i, 0d);
-				}
+					levelStats.add(i,_statsModel.getHighScore(i));
 			}
 			_sc.onModelChange("levelsLoaded", levelStats);
 			break;

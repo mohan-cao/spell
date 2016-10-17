@@ -19,6 +19,7 @@ import com.eclipsesource.json.JsonObject;
 import com.eclipsesource.json.JsonValue;
 
 import application.ModelUpdateEvent;
+import javafx.animation.FadeTransition;
 import javafx.beans.InvalidationListener;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.StringBinding;
@@ -40,9 +41,11 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.FlowPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.paint.Paint;
+import javafx.util.Duration;
 
 /**
  * A view-controller that is bound to the quiz_layout fxml
@@ -63,6 +66,7 @@ public class QuizController extends SceneController{
 	@FXML private TextField csText;
 	@FXML private TextField pbText;
 	@FXML private TextField msText;
+	@FXML private HBox highscorebox;
 	private LongProperty personalBest;
 	private LongProperty maximum;
 	private LongProperty currentscore;
@@ -84,6 +88,7 @@ public class QuizController extends SceneController{
 	public MediaPlayer getAudioFromResources(String resource){
 		try {
 			MediaPlayer media = new MediaPlayer(new Media(getClass().getClassLoader().getResource(resource).toURI().toString()));
+			media.setAutoPlay(false);
 			return media;
 		} catch (URISyntaxException e) {
 			logger.error("media isnt work sorry");
@@ -160,6 +165,19 @@ public class QuizController extends SceneController{
 	@FXML
 	public void getDefinition(MouseEvent me){
 		application.update(new ModelUpdateEvent(this,"getAndSayDefinition"));
+	}
+	/**
+	 * Prints a title on the screen for specified time
+	 * @param word
+	 * @param milliseconds
+	 */
+	private void printTimedTitle(String word, Label l, int milliseconds){
+		l.setText(word);
+		FadeTransition fade = new FadeTransition(Duration.millis(1000),l);
+		fade.setFromValue(1);
+		fade.setToValue(0);
+		fade.playFromStart();
+		
 	}
 	/**
 	 * Validates input before sending it to the marking algorithm
@@ -240,6 +258,7 @@ b	 * Gets text area input
 			confirm.setDisable(false);
 			buttonPanel.setVisible(false);
 			wordTextArea.setDisable(false);
+			highscorebox.setVisible(true);
 			confirm.setText("Check");		
 			wordTextArea.requestFocus();
 			outputLabel.setText("Level "+(int)objectParameters[0]);
@@ -252,25 +271,27 @@ b	 * Gets text area input
 			currentscore.set(0);
 			break;
 		case "resetGame":
+			String outputString = "";
 			definition.setVisible(false);
 			logger.debug("resetGame model update");
 			MediaPlayer media = getAudioFromResources("resources/victory announcer.mp3");
 			media.setVolume(0.2);
 			media.play();
+			if(currentscore.get()>personalBest.get()) {outputString = "You beat your personal best! Congratulations!\n"; personalBest.set(currentscore.get());}
 			outputLabel.setText("Well done!");
 			outputLabel.setTextFill(Paint.valueOf("black"));
 			currentscore.set((long) objectParameters[0]);
 			if(objectParameters.length==1){
-				correctWordLabel.setText("Points scored this round: "+objectParameters[0]);
+				correctWordLabel.setText(outputString+"Rating: "+objectParameters[0]);
 			}else if(objectParameters.length==2){
-				correctWordLabel.setText("Points scored this round: "+objectParameters[0]+"\nThe last word was \""+objectParameters[1]+"\"");
+				correctWordLabel.setText(outputString+"Rating: "+objectParameters[0]+"\nThe last word was \""+objectParameters[1]+"\"");
 			}
 			wordTextArea.setDisable(true);
 			confirm.setText("Restart?");
 			break;
 		case "masteredWord":
 			logger.debug("masteredWord model update");
-			outputLabel.setText("Well done");
+			printTimedTitle("Well done!",outputLabel,1000);
 			outputLabel.setTextFill(Paint.valueOf("#44a044"));
 			correctWordLabel.setText("Correct, the word is \""+objectParameters[0]+"\"");
 			progress.setStyle("-fx-accent: lightgreen;");
@@ -278,25 +299,25 @@ b	 * Gets text area input
 			break;
 		case "faultedWord":
 			logger.debug("faultedWord model update");
-			outputLabel.setText("Try again!");
+			printTimedTitle("Try again!",outputLabel,1000);
 			outputLabel.setTextFill(Paint.valueOf("#cf8f14"));
-			correctWordLabel.setText("Sorry, that wasn't quite right");
+			printTimedTitle("Sorry, that wasn't quite right", correctWordLabel, 1000);
 			progress.setStyle("-fx-accent: #ffbf44;");
 			currentscore.set((long)objectParameters[1]);
 			break;
 		case "lastChanceWord":
 			logger.debug("lastChanceWord model update");
-			outputLabel.setText("Last try!");
+			printTimedTitle("Last try!",outputLabel,2000);
 			outputLabel.setTextFill(Paint.valueOf("#cf8f14"));
-			correctWordLabel.setText("Let's slow it down...");
+			printTimedTitle("Let's slow it down...",correctWordLabel,2000);
 			progress.setStyle("-fx-accent: #ffbf44;");
 			currentscore.set((long)objectParameters[1]);
 			break;
 		case "failedWord":
 			logger.debug("failedWord model update");
-			outputLabel.setText("Incorrect");
+			printTimedTitle("Incorrect",outputLabel,1000);
 			outputLabel.setTextFill(Paint.valueOf("orangered"));
-			correctWordLabel.setText("The word was \""+objectParameters[0]+"\"");
+			printTimedTitle("The word was \""+objectParameters[0]+"\"",correctWordLabel,1000);
 			progress.setStyle("-fx-accent: orangered;");
 			currentscore.set((long)objectParameters[1]);
 			break;
@@ -308,6 +329,7 @@ b	 * Gets text area input
 			buttonPanel.setVisible(true);
 			break;
 		case "gameWin":
+			highscorebox.setVisible(false);
 			definition.setVisible(false);
 			currentscore.set(0);
 			personalBest.set(0);

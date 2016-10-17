@@ -109,7 +109,7 @@ public class Game {
 		voiceType = voices.remove(0);
 		voices.add(voiceType);
 		
-		switch(voiceType){
+		switch(voices.get(0)){
 		case "kal_diphone":
 			main.sayWord(SAY_SPEED_DEFAULT, voiceType, "Using American English");
 			break;

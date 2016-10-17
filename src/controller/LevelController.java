@@ -12,6 +12,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.TilePane;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
@@ -28,6 +29,7 @@ public class LevelController extends SceneController {
 	@FXML private Label levelStatsLbl;
 	@FXML private TilePane tileContainer;
 	@FXML private boolean review;
+	@FXML private StackPane back;
 	private MediaPlayer media;
 	private LevelButton lastButtonClicked;
 	private Button currentHoveredButton;
@@ -100,10 +102,10 @@ public class LevelController extends SceneController {
 						application.update(new ModelUpdateEvent(this,"startNewGame"));
 					}
 				});
-				final long masteredpercentage=Math.round((Double)stats.get(i)*100);
+				final long score = (long) stats.get(i);
 				newBtn.addEventHandler(MouseEvent.MOUSE_ENTERED, event -> {
 					if(currentHoveredButton!=null&&currentHoveredButton.equals(newBtn)) return;
-					levelStatsLbl.setText("Mastery (words mastered/total): "+masteredpercentage+"%");
+					levelStatsLbl.setText("Personal best: "+score);
 					currentHoveredButton = newBtn;
 				});
 				newBtn.setMinSize(200, 200);
@@ -111,6 +113,7 @@ public class LevelController extends SceneController {
 				Text text = new Text(""+i);
 				text.setStyle("-fx-font-size: "+(60+Math.min((i/10)*2,20))+"px;");
 				newBtn.setGraphic(text);
+				newBtn.setStyle("-fx-background-radius:100px;");
 				tileContainer.getChildren().add(newBtn);
 			}
 			break;

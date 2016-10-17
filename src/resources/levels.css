@@ -8,6 +8,10 @@
 .scroll-pane > .scroll-bar > .thumb{
 	-fx-background-color:#bbcef0;
 }
+.levelbutton {
+	-fx-background-radius: 25px;
+	-fx-border-radius: 25px;
+}
 .button {
 	-fx-background-color:#eff3ff;
 	-fx-border-radius:5px;

@@ -9,6 +9,7 @@
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.TilePane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
@@ -31,63 +32,68 @@
             </AnchorPane>
             <ScrollPane fitToWidth="true" hbarPolicy="NEVER" VBox.vgrow="ALWAYS">
                <content>
-                  <TilePane fx:id="tileContainer" alignment="CENTER" hgap="20.0" prefHeight="200.0" prefTileHeight="200.0" prefTileWidth="200.0" prefWidth="200.0" vgap="20.0">
+                  <StackPane>
                      <children>
-                        <Button mnemonicParsing="false" prefHeight="50.0" prefWidth="50.0" text="1">
-                           <font>
-                              <Font size="16.0" />
-                           </font>
-                        </Button>
-                        <Button mnemonicParsing="false" prefHeight="50.0" prefWidth="50.0" text="2">
-                           <font>
-                              <Font size="16.0" />
-                           </font>
-                        </Button>
-                        <Button mnemonicParsing="false" prefHeight="50.0" prefWidth="50.0" text="3">
-                           <font>
-                              <Font size="16.0" />
-                           </font>
-                        </Button>
-                        <Button mnemonicParsing="false" prefHeight="50.0" prefWidth="50.0" text="4">
-                           <font>
-                              <Font size="16.0" />
-                           </font>
-                        </Button>
-                        <Button mnemonicParsing="false" prefHeight="50.0" prefWidth="50.0" text="5">
-                           <font>
-                              <Font size="16.0" />
-                           </font>
-                        </Button>
-                        <Button mnemonicParsing="false" prefHeight="50.0" prefWidth="50.0" text="6">
-                           <font>
-                              <Font size="16.0" />
-                           </font>
-                        </Button>
-                        <Button mnemonicParsing="false" prefHeight="50.0" prefWidth="50.0" text="7">
-                           <font>
-                              <Font size="16.0" />
-                           </font>
-                        </Button>
-                        <Button mnemonicParsing="false" prefHeight="50.0" prefWidth="50.0" text="8">
-                           <font>
-                              <Font size="16.0" />
-                           </font>
-                        </Button>
-                        <Button mnemonicParsing="false" prefHeight="50.0" prefWidth="50.0" text="9">
-                           <font>
-                              <Font size="16.0" />
-                           </font>
-                        </Button>
-                        <Button mnemonicParsing="false" prefHeight="50.0" prefWidth="50.0" text="10" textOverrun="CLIP">
-                           <font>
-                              <Font size="16.0" />
-                           </font>
-                        </Button>
+                        <StackPane fx:id="back" prefHeight="150.0" prefWidth="200.0" />
+                        <TilePane fx:id="tileContainer" alignment="CENTER" hgap="20.0" prefHeight="200.0" prefTileHeight="200.0" prefTileWidth="200.0" prefWidth="200.0" style="-fx-background-color: transparent;" vgap="20.0">
+                           <children>
+                              <Button mnemonicParsing="false" prefHeight="50.0" prefWidth="50.0" text="1">
+                                 <font>
+                                    <Font size="16.0" />
+                                 </font>
+                              </Button>
+                              <Button mnemonicParsing="false" prefHeight="50.0" prefWidth="50.0" text="2">
+                                 <font>
+                                    <Font size="16.0" />
+                                 </font>
+                              </Button>
+                              <Button mnemonicParsing="false" prefHeight="50.0" prefWidth="50.0" text="3">
+                                 <font>
+                                    <Font size="16.0" />
+                                 </font>
+                              </Button>
+                              <Button mnemonicParsing="false" prefHeight="50.0" prefWidth="50.0" text="4">
+                                 <font>
+                                    <Font size="16.0" />
+                                 </font>
+                              </Button>
+                              <Button mnemonicParsing="false" prefHeight="50.0" prefWidth="50.0" text="5">
+                                 <font>
+                                    <Font size="16.0" />
+                                 </font>
+                              </Button>
+                              <Button mnemonicParsing="false" prefHeight="50.0" prefWidth="50.0" text="6">
+                                 <font>
+                                    <Font size="16.0" />
+                                 </font>
+                              </Button>
+                              <Button mnemonicParsing="false" prefHeight="50.0" prefWidth="50.0" text="7">
+                                 <font>
+                                    <Font size="16.0" />
+                                 </font>
+                              </Button>
+                              <Button mnemonicParsing="false" prefHeight="50.0" prefWidth="50.0" text="8">
+                                 <font>
+                                    <Font size="16.0" />
+                                 </font>
+                              </Button>
+                              <Button mnemonicParsing="false" prefHeight="50.0" prefWidth="50.0" text="9">
+                                 <font>
+                                    <Font size="16.0" />
+                                 </font>
+                              </Button>
+                              <Button mnemonicParsing="false" prefHeight="50.0" prefWidth="50.0" text="10" textOverrun="CLIP">
+                                 <font>
+                                    <Font size="16.0" />
+                                 </font>
+                              </Button>
+                           </children>
+                           <padding>
+                              <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+                           </padding>
+                        </TilePane>
                      </children>
-                     <padding>
-                        <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
-                     </padding>
-                  </TilePane>
+                  </StackPane>
                </content>
             </ScrollPane>
          </children>
