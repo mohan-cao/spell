@@ -245,7 +245,7 @@ public class Game {
 	 */
 	public void repeatWord(){
 		if(!gameEnded){
-		main.sayWord(SAY_SPEED_DEFAULT, voiceType, wordList.get(0));
+		main.sayWord(SAY_SPEED_DEFAULT, voiceType, "The word is "+wordList.get(0));
 		}
 	}
 	

@@ -106,7 +106,7 @@
                     <columnConstraints>
                       <ColumnConstraints />
                       <ColumnConstraints hgrow="SOMETIMES" />
-                        <ColumnConstraints />
+                        <ColumnConstraints minWidth="-Infinity" />
                     </columnConstraints>
                     <rowConstraints>
                       <RowConstraints minHeight="10.0" prefHeight="100.0" vgrow="SOMETIMES" />
@@ -155,9 +155,9 @@
                               <Hyperlink fx:id="definition" layoutX="429.0" layoutY="44.0" onMouseClicked="#getDefinition" text="Get spoken example" AnchorPane.bottomAnchor="3.0" AnchorPane.rightAnchor="3.0" />
                            </children>
                         </AnchorPane>
-                        <AnchorPane prefHeight="100.0" prefWidth="150.0" GridPane.columnIndex="2">
+                        <AnchorPane GridPane.columnIndex="2">
                            <children>
-                              <Button fx:id="confirm" mnemonicParsing="false" onMouseClicked="#btnConfirm" prefHeight="80.0" prefWidth="139.0" text="Check" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0">
+                              <Button fx:id="confirm" mnemonicParsing="false" onMouseClicked="#btnConfirm" text="Check" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0">
                                  <font>
                                     <Font size="24.0" />
                                  </font>
